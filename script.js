@@ -102,10 +102,10 @@ let pendingPayload = null;
           hoursSum += log.hoursWorked || 0;
 
           if (log.type === "Deposit") {
-            if (log.category === "GrabFood") { grabEarningSum += log.grossRaw; grabHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.grossRaw; shopeeHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "Lalamove") { lalamoveEarningSum += log.grossRaw; lalamoveHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.grossRaw; foodpandaHoursSum += log.hoursWorked || 0; }
+            if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; grabHoursSum += log.hoursWorked || 0; }
+            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; shopeeHoursSum += log.hoursWorked || 0; }
+            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; lalamoveHoursSum += log.hoursWorked || 0; }
+            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; foodpandaHoursSum += log.hoursWorked || 0; }
           }
         });
 
@@ -126,10 +126,10 @@ let pendingPayload = null;
             tipsSum += log.tipsRaw;
             hoursSum += log.hoursWorked || 0;
             uniqueWorkingDates[log.date] = true;
-            if (log.category === "GrabFood") { grabEarningSum += log.grossRaw; grabHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.grossRaw; shopeeHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "Lalamove") { lalamoveEarningSum += log.grossRaw; lalamoveHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.grossRaw; foodpandaHoursSum += log.hoursWorked || 0; }
+            if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; grabHoursSum += log.hoursWorked || 0; }
+            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; shopeeHoursSum += log.hoursWorked || 0; }
+            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; lalamoveHoursSum += log.hoursWorked || 0; }
+            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; foodpandaHoursSum += log.hoursWorked || 0; }
           }
         });
 
