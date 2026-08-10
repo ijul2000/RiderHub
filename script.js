@@ -4,13 +4,26 @@ let pendingPayload = null;
     let masterCachedHistoryLogs = [];
     let lastFilteredLogs = []; // BARU: simpan senarai terkini yang dah difilter, dipakai oleh modal "Lihat Semua"
 
-    // BARU: format nombor ke 2 titik perpuluhan dengan POTONG (truncate) sahaja — tiada rounding
-    function truncate2_(num) {
+    // BARU: kira & papar duit dalam UNIT SEN (integer) sepenuhnya — elak terus isu floating-point
+    // JS (cth 165.56000000000001) yang buat .toFixed() nampak macam "bundar". POTONG (truncate)
+    // ke arah sifar, tiada bulatan langsung.
+    function toCents_(num) {
       num = Number(num) || 0;
-      return (num < 0 ? -1 : 1) * Math.floor(Math.abs(num) * 100) / 100;
+      var scaled = num * 100;
+      // bersihkan 'noise' float pada aras sangat halus (1e-6) dahulu, supaya nilai sebenar
+      // (cth 16555.999999999998 yang sepatutnya 16556) tak silap terpotong
+      var cleaned = (scaled < 0 ? -1 : 1) * Math.round(Math.abs(scaled) * 1e6) / 1e6;
+      return Math.trunc(cleaned); // integer sen, potong ke arah sifar — bukan bundar
+    }
+    function centsToStr_(cents) {
+      var sign = cents < 0 ? '-' : '';
+      cents = Math.abs(cents);
+      var dollars = Math.floor(cents / 100);
+      var rem = cents % 100;
+      return sign + dollars + '.' + String(rem).padStart(2, '0');
     }
     function fmt2_(num) {
-      return truncate2_(num).toFixed(2);
+      return centsToStr_(toCents_(num));
     }
 
     // ================== API HELPER (GitHub Pages -> Google Apps Script Web App) ==================
@@ -126,11 +139,15 @@ let pendingPayload = null;
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
         netEarningResult = rawNetEarningSum - totalExpenseSum;
 
-        // Potong (truncate) Net Earning & Saving ke sen dahulu, kemudian Loan = baki tepat
-        // supaya Saving + Loan SENTIASA sama dengan Net Earning yang dipaparkan (tiada beza 1 sen)
-        netEarningResult = truncate2_(netEarningResult);
-        remainingSaving = truncate2_(remainingSaving);
-        remainingLoan = truncate2_(netEarningResult - remainingSaving);
+        // Semua pengiraan akhir dibuat dalam integer SEN — bukan desimal — supaya Saving + Loan
+        // SENTIASA jumlah tepat sama dengan Net Earning (tiada beza 1 sen, tiada isu floating-point)
+        let netEarningCents_ = toCents_(netEarningResult);
+        let savingCents_ = toCents_(remainingSaving);
+        let loanCents_ = netEarningCents_ - savingCents_; // baki integer tepat, bukan 70% berasingan
+
+        netEarningResult = netEarningCents_ / 100;
+        remainingSaving = savingCents_ / 100;
+        remainingLoan = loanCents_ / 100;
 
       } else {
         // ---- PAPARAN IKUT PLATFORM (GrabFood / ShopeeFood / Lalamove) ----
