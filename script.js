@@ -114,7 +114,7 @@ let pendingPayload = null;
         remainingLoan = (rawNetEarningSum - loanExpenseSum - fuelSum - lainSum) * 0.70;
 
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
-        netEarningResult = rawNetEarningSum + tipsSum - totalExpenseSum;
+        netEarningResult = rawNetEarningSum - totalExpenseSum;
 
       } else {
         // ---- PAPARAN IKUT PLATFORM (GrabFood / ShopeeFood / Lalamove) ----
@@ -122,7 +122,7 @@ let pendingPayload = null;
 
         periodLogs.forEach(log => {
           if (log.type === "Deposit" && log.category === selectedPlatform) {
-            netEarningResult += log.netEarningRaw + log.tipsRaw;
+            netEarningResult += log.netEarningRaw;
             tipsSum += log.tipsRaw;
             hoursSum += log.hoursWorked || 0;
             uniqueWorkingDates[log.date] = true;
