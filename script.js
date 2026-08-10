@@ -109,9 +109,9 @@ let pendingPayload = null;
           }
         });
 
-        // Allocation dikira terus dari Net Earning (tanpa Tip Received), tanpa tolak Fuel/Lain-Lain dahulu
-        remainingSaving = (rawNetEarningSum * 0.30) - (savingExpenseSum + fuelSum + lainSum);
-        remainingLoan = (rawNetEarningSum * 0.70) - (loanExpenseSum + fuelSum + lainSum);
+        // Allocation: peratusan diambil selepas tolak withdrawal kategori berkaitan + Fuel + Lain-Lain dari Net Earning (tanpa Tip Received)
+        remainingSaving = (rawNetEarningSum - savingExpenseSum - fuelSum - lainSum) * 0.30;
+        remainingLoan = (rawNetEarningSum - loanExpenseSum - fuelSum - lainSum) * 0.70;
 
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
         netEarningResult = rawNetEarningSum + tipsSum - totalExpenseSum;
