@@ -1,0 +1,142 @@
+:root{
+      --paper:#faf6ee;
+      --paper-shadow:#e9e2d3;
+      --ink:#4a4438;
+      --ink-soft:#8a8272;
+      --sage:#9CAF88;
+      --sage-dark:#748862;
+      --sage-bg:#eef2e6;
+      --rose:#d9a5a0;
+      --rose-dark:#b97a73;
+      --rose-bg:#faeae8;
+      --mustard:#d9b26a;
+      --mustard-bg:#faf1de;
+      --slate:#a7b4c4;
+      --slate-bg:#eef1f5;
+      --panda:#d98bb0;
+      --panda-dark:#b8578c;
+      --panda-bg:#faeaf3;
+      --line-dash: repeating-linear-gradient(to right, var(--ink-soft) 0, var(--ink-soft) 6px, transparent 6px, transparent 12px);
+    }
+    body{
+      background: #ece6d8;
+      background-image: radial-gradient(#d9d0bb 0.6px, transparent 0.6px);
+      background-size: 14px 14px;
+      font-family: 'Space Mono', 'Courier Prime', monospace;
+      color: var(--ink);
+    }
+    .receipt-font{ font-family:'Courier Prime', monospace; }
+    .receipt-card{
+      background: var(--paper);
+      box-shadow: 0 10px 30px -8px rgba(74,68,56,0.25), 0 2px 6px rgba(74,68,56,0.08);
+      position: relative;
+    }
+    .zig-top, .zig-bottom{
+      position:absolute; left:0; right:0; height:11px; background:#ece6d8;
+    }
+    .zig-top{ top:-1px;
+      -webkit-mask: repeating-linear-gradient(-45deg, transparent 0 5.5px, #000 5.5px 11px);
+      mask: repeating-linear-gradient(-45deg, transparent 0 5.5px, #000 5.5px 11px);
+    }
+    .zig-bottom{ bottom:-1px;
+      -webkit-mask: repeating-linear-gradient(45deg, transparent 0 5.5px, #000 5.5px 11px);
+      mask: repeating-linear-gradient(45deg, transparent 0 5.5px, #000 5.5px 11px);
+    }
+    .dotted-row{
+      display:flex; align-items:baseline; justify-content:space-between; gap:.5rem;
+    }
+    .dotted-row .fill{
+      flex:1; border-bottom: 2px dotted #cfc6b2; margin:0 6px; transform:translateY(-3px);
+    }
+    .dashed-div{ border-top: 1.5px dashed #d8cfba; }
+    .badge-deposit{ background:var(--sage-bg); color:var(--sage-dark); }
+    .badge-withdraw{ background:var(--rose-bg); color:var(--rose-dark); }
+    .scroll-thin::-webkit-scrollbar{ width:6px; }
+    .scroll-thin::-webkit-scrollbar-thumb{ background:#d8cfba; border-radius:4px; }
+    .scroll-thin::-webkit-scrollbar-track{ background:transparent; }
+    .barcode{
+      height:34px;
+      background-image: repeating-linear-gradient(to right, var(--ink) 0px, var(--ink) 2px, transparent 2px, transparent 5px, var(--ink) 5px, var(--ink) 6px, transparent 6px, transparent 10px);
+      opacity:.55;
+    }
+    .modal-backdrop{ background: rgba(74,68,56,0.35); backdrop-filter: blur(3px); }
+    .fab-btn{ transition: transform .15s ease; }
+    .fab-btn:active{ transform: scale(0.96); }
+
+    /* BARU: Butang header (Deposit/Withdraw/Export) — icon sebelah teks, tanpa underline dashed */
+    .header-btn{
+      display:flex; flex-direction:row; align-items:center; justify-content:center; gap:5px;
+      padding:4px 8px;
+      border-radius:0;
+      font-family:'Space Mono', monospace;
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:.06em;
+      background:transparent;
+      border:none;
+      box-shadow:none;
+      transition: transform .15s ease, opacity .15s ease;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+    .header-btn i{
+      font-size:12px;
+    }
+    .header-btn:active{ transform: scale(0.92); opacity:.7; }
+    .header-btn-deposit{
+      color: var(--sage-dark);
+    }
+    .header-btn-withdraw{
+      color: var(--rose-dark);
+    }
+    .header-btn-export{
+      color: var(--ink-soft);
+    }
+
+    /* BARU: animasi hover khusus untuk desktop (peranti dengan cursor/mouse) sahaja — tidak sentuh mobile/tablet sentuh */
+    @media (hover: hover) and (pointer: fine){
+      .header-btn i{ transition: transform .2s ease; }
+      .header-btn:hover{ transform: translateY(-2px); }
+      .header-btn-deposit:hover{ color: var(--sage-dark); }
+      .header-btn-deposit:hover i{ transform: scale(1.2); }
+      .header-btn-withdraw:hover i{ transform: scale(1.2); }
+      .header-btn-export:hover i{ transform: scale(1.2); }
+    }
+
+    /* BARU: saiz butang header khusus untuk mobile (<640px) sahaja — tablet/desktop tidak terjejas */
+    @media (max-width: 639px){
+      .header-btn{
+        padding:3px 6px;
+        font-size:8px;
+        gap:4px;
+      }
+      .header-btn i{ font-size:10px; }
+    }
+
+    select.plain, input.plain{
+      background: transparent; border:none; border-bottom:1.5px dashed #cfc6b2;
+      font-family:'Space Mono', monospace; font-size:12px; color:var(--ink);
+    }
+    select.plain:focus, input.plain:focus{ outline:none; border-bottom-color: var(--sage-dark); }
+
+    /* BARU: gaya dropdown Period — warna mustard, tanpa border (sepadan style Deposit/Withdraw/Export) */
+    .period-select{
+      font-family:'Space Mono', monospace;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.03em;
+      color:#a97e2f;
+      background: transparent;
+      border: none;
+      padding:3px 4px;
+      transition: opacity .15s ease;
+    }
+    .period-select:focus{ outline:none; }
+    @media (hover: hover) and (pointer: fine){
+      .period-select:hover{ opacity:.75; }
+    }
+    @media (max-width: 639px){
+      .period-select{ font-size:10px; padding:2px 3px; }
+    }
+
+    /* NOTA: kedua-dua donut (Earnings by Platform & Allocation) kini sama saiz di semua saiz skrin — lihat class w-full max-w-[160px] sm:max-w-[190px] pada kedua-dua chart box */
