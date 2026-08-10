@@ -5,10 +5,12 @@ let pendingPayload = null;
     let lastFilteredLogs = []; // BARU: simpan senarai terkini yang dah difilter, dipakai oleh modal "Lihat Semua"
 
     // BARU: format nombor ke 2 titik perpuluhan dengan POTONG (truncate) sahaja — tiada rounding
-    function fmt2_(num) {
+    function truncate2_(num) {
       num = Number(num) || 0;
-      var truncated = (num < 0 ? -1 : 1) * Math.floor(Math.abs(num) * 100) / 100;
-      return truncated.toFixed(2);
+      return (num < 0 ? -1 : 1) * Math.floor(Math.abs(num) * 100) / 100;
+    }
+    function fmt2_(num) {
+      return truncate2_(num).toFixed(2);
     }
 
     // ================== API HELPER (GitHub Pages -> Google Apps Script Web App) ==================
@@ -123,6 +125,12 @@ let pendingPayload = null;
 
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
         netEarningResult = rawNetEarningSum - totalExpenseSum;
+
+        // Potong (truncate) Net Earning & Saving ke sen dahulu, kemudian Loan = baki tepat
+        // supaya Saving + Loan SENTIASA sama dengan Net Earning yang dipaparkan (tiada beza 1 sen)
+        netEarningResult = truncate2_(netEarningResult);
+        remainingSaving = truncate2_(remainingSaving);
+        remainingLoan = truncate2_(netEarningResult - remainingSaving);
 
       } else {
         // ---- PAPARAN IKUT PLATFORM (GrabFood / ShopeeFood / Lalamove) ----
