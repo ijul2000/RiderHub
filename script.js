@@ -109,9 +109,9 @@ let pendingPayload = null;
           }
         });
 
-        let baseAllocation = rawNetEarningSum - fuelSum - lainSum;
-        remainingSaving = (baseAllocation * 0.30) - savingExpenseSum;
-        remainingLoan = (baseAllocation * 0.70) - loanExpenseSum;
+        // Allocation dikira terus dari Net Earning (tanpa Tip Received), tanpa tolak Fuel/Lain-Lain dahulu
+        remainingSaving = (rawNetEarningSum * 0.30) - savingExpenseSum;
+        remainingLoan = (rawNetEarningSum * 0.70) - loanExpenseSum;
 
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
         netEarningResult = rawNetEarningSum + tipsSum - totalExpenseSum;
