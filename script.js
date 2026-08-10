@@ -4,6 +4,13 @@ let pendingPayload = null;
     let masterCachedHistoryLogs = [];
     let lastFilteredLogs = []; // BARU: simpan senarai terkini yang dah difilter, dipakai oleh modal "Lihat Semua"
 
+    // BARU: format nombor ke 2 titik perpuluhan dengan POTONG (truncate) sahaja — tiada rounding
+    function fmt2_(num) {
+      num = Number(num) || 0;
+      var truncated = (num < 0 ? -1 : 1) * Math.floor(Math.abs(num) * 100) / 100;
+      return truncated.toFixed(2);
+    }
+
     // ================== API HELPER (GitHub Pages -> Google Apps Script Web App) ==================
     // API_URL ditakrifkan dalam index.html (sebelum <script src="script.js">)
     function apiGet(action) {
@@ -143,11 +150,11 @@ let pendingPayload = null;
       document.getElementById('lblWorkingDays').innerText = Object.keys(uniqueWorkingDates).length + " Days";
       document.getElementById('lblWorkingHour').innerText = formatHoursToHM(hoursSum);
 
-      document.getElementById('lblNetEarning').innerText = "RM " + netEarningResult.toFixed(2);
-      document.getElementById('lblTips').innerText = "RM " + tipsSum.toFixed(2);
-      document.getElementById('lblExpenses').innerText = showBlankExpenseAllocation ? "-" : ("RM " + totalExpenseSum.toFixed(2));
-      document.getElementById('lblSaving').innerText = showBlankExpenseAllocation ? "-" : ("RM " + remainingSaving.toFixed(2));
-      document.getElementById('lblLoan').innerText = showBlankExpenseAllocation ? "-" : ("RM " + remainingLoan.toFixed(2));
+      document.getElementById('lblNetEarning').innerText = "RM " + fmt2_(netEarningResult);
+      document.getElementById('lblTips').innerText = "RM " + fmt2_(tipsSum);
+      document.getElementById('lblExpenses').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(totalExpenseSum));
+      document.getElementById('lblSaving').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(remainingSaving));
+      document.getElementById('lblLoan').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(remainingLoan));
 
       // BARU: preview terhad di resit utama
       document.getElementById('historyList').innerHTML = buildHistoryHtml(filteredLogs.slice(0, PREVIEW_LIMIT));
