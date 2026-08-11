@@ -80,7 +80,7 @@ let pendingPayload = null;
     function loadSheetTotals() {
       apiGet("getDashboardData").then(function(res) {
         if(res.error) { showToast(res.error, "error"); return; }
-        console.log("RIDERHUB_DEBUG raw response:", res); // BARU: debug sementara — buang lepas siap
+        console.log("RIDERHUB_DEBUG raw response history summary:", JSON.stringify((res.history || []).map(l => ({date: l.date, type: l.type, category: l.category, amount: l.amount, hoursWorked: l.hoursWorked})))); // BARU: debug sementara — buang lepas siap
         console.log("RIDERHUB_DEBUG history count:", (res.history || []).length);
         masterCachedHistoryLogs = res.history || [];
         buildYearFilterDropdowns();
@@ -94,7 +94,7 @@ let pendingPayload = null;
       const selectedMonth = document.getElementById('mainFilterMonth').value;
       const selectedYear = document.getElementById('mainFilterYear').value;
       const selectedPlatform = document.getElementById('mainFilterPlatform').value;
-      console.log("RIDERHUB_DEBUG filters:", { selectedMonth, selectedYear, selectedPlatform }); // BARU: debug sementara
+      console.log("RIDERHUB_DEBUG filters:", JSON.stringify({ selectedMonth, selectedYear, selectedPlatform })); // BARU: debug sementara
 
       // Step 1: tapis ikut month/year sahaja dulu — platform dikendali berasingan ikut jenis kad di bawah
       let periodLogs = masterCachedHistoryLogs.filter(log => {
@@ -102,7 +102,8 @@ let pendingPayload = null;
         if (selectedYear !== "ALL" && String(log.year) !== selectedYear) return false;
         return true;
       });
-      console.log("RIDERHUB_DEBUG periodLogs count:", periodLogs.length, periodLogs); // BARU: debug sementara
+      console.log("RIDERHUB_DEBUG periodLogs count:", periodLogs.length); // BARU: debug sementara
+      console.log("RIDERHUB_DEBUG periodLogs summary:", JSON.stringify(periodLogs.map(l => ({date: l.date, type: l.type, category: l.category, amount: l.amount, hoursWorked: l.hoursWorked}))));
 
       let uniqueWorkingDates = {};
       let filteredLogs;
