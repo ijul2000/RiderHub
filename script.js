@@ -77,7 +77,7 @@ let pendingPayload = null;
     }
 
     function loadSheetTotals() {
-      apiGet("getDashboardData").then(function(res) {
+      return apiGet("getDashboardData").then(function(res) {
         if(res.error) { showToast(res.error, "error"); return; }
         console.log("RIDERHUB_DEBUG history count:", (res.history || []).length);
         masterCachedHistoryLogs = res.history || [];
@@ -85,6 +85,21 @@ let pendingPayload = null;
         syncDashboardCalculations();
       }).catch(function(err) {
         showToast("Failed to load data: " + err, "error");
+      });
+    }
+
+    // BARU: butang refresh — muat semula data terkini dari Sheet tanpa reload penuh page
+    function refreshDashboard() {
+      const btn = document.getElementById('btnRefresh');
+      const icon = document.getElementById('refreshIcon');
+      if (btn.disabled) return; // elak double-tap semasa masih loading
+      btn.disabled = true;
+      icon.classList.add('is-spinning');
+      loadSheetTotals().then(function() {
+        showToast("Dashboard refreshed!", "success");
+      }).finally(function() {
+        icon.classList.remove('is-spinning');
+        btn.disabled = false;
       });
     }
 
