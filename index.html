@@ -39,8 +39,8 @@
           <p class="text-[10px] mt-1" style="color:var(--ink-soft)" id="lblPrintedOn">-- / -- / ----</p>
         </div>
 
-        <!-- BARU: Butang Deposit/Withdraw/Export — kini di bawah tarikh, susun sebaris & center, sama untuk semua saiz skrin -->
-        <div class="flex flex-row justify-center gap-4 sm:gap-6 mt-3">
+        <!-- BARU: Butang Deposit/Withdraw/Export/Refresh — kini di bawah tarikh, susun sebaris & center, sama untuk semua saiz skrin -->
+        <div class="flex flex-row flex-wrap justify-center gap-x-4 gap-y-2 sm:gap-x-6 mt-3">
           <button onclick="openModal('add')" class="header-btn header-btn-deposit">
             <i class="fa-solid fa-plus"></i><span>DEPOSIT</span>
           </button>
@@ -49,6 +49,9 @@
           </button>
           <button onclick="confirmExportPdf()" class="header-btn header-btn-export">
             <i class="fa-solid fa-file-pdf"></i><span>EXPORT PDF</span>
+          </button>
+          <button id="btnRefresh" onclick="refreshDashboard()" class="header-btn header-btn-refresh">
+            <i class="fa-solid fa-rotate" id="refreshIcon"></i><span>REFRESH</span>
           </button>
         </div>
       </div>
