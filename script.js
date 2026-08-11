@@ -80,6 +80,8 @@ let pendingPayload = null;
     function loadSheetTotals() {
       apiGet("getDashboardData").then(function(res) {
         if(res.error) { showToast(res.error, "error"); return; }
+        console.log("RIDERHUB_DEBUG raw response:", res); // BARU: debug sementara — buang lepas siap
+        console.log("RIDERHUB_DEBUG history count:", (res.history || []).length);
         masterCachedHistoryLogs = res.history || [];
         buildYearFilterDropdowns();
         syncDashboardCalculations();
@@ -92,6 +94,7 @@ let pendingPayload = null;
       const selectedMonth = document.getElementById('mainFilterMonth').value;
       const selectedYear = document.getElementById('mainFilterYear').value;
       const selectedPlatform = document.getElementById('mainFilterPlatform').value;
+      console.log("RIDERHUB_DEBUG filters:", { selectedMonth, selectedYear, selectedPlatform }); // BARU: debug sementara
 
       // Step 1: tapis ikut month/year sahaja dulu — platform dikendali berasingan ikut jenis kad di bawah
       let periodLogs = masterCachedHistoryLogs.filter(log => {
@@ -99,6 +102,7 @@ let pendingPayload = null;
         if (selectedYear !== "ALL" && String(log.year) !== selectedYear) return false;
         return true;
       });
+      console.log("RIDERHUB_DEBUG periodLogs count:", periodLogs.length, periodLogs); // BARU: debug sementara
 
       let uniqueWorkingDates = {};
       let filteredLogs;
@@ -177,6 +181,7 @@ let pendingPayload = null;
       lastFilteredLogs = filteredLogs; // BARU: simpan untuk dipakai oleh modal "Lihat Semua"
 
       document.getElementById('lblWorkingDays').innerText = Object.keys(uniqueWorkingDates).length + " Days";
+      console.log("RIDERHUB_DEBUG hoursSum before display:", hoursSum); // BARU: debug sementara
       document.getElementById('lblWorkingHour').innerText = formatHoursToHM(hoursSum);
 
       document.getElementById('lblNetEarning').innerText = "RM " + fmt2_(netEarningResult);
