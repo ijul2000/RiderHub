@@ -108,18 +108,11 @@
         <span id="lblWorkingDays" class="font-bold">0 Days</span>
       </div>
 
-      <!-- WORKING HOUR -->
-      <div class="dotted-row text-[13px] mb-1">
-        <span><i class="fa-solid fa-clock mr-1" style="color:var(--mustard)"></i>Working Hour</span>
-        <span class="fill"></span>
-        <span id="lblWorkingHour" class="font-bold">0h 0m</span>
-      </div>
-
       <div class="dashed-div my-3"></div>
 
       <!-- CHARTS -->
       <div class="mb-1 -mx-6 sm:-mx-10">
-        <p class="text-[9px] font-bold tracking-wider mb-1 text-center" style="color:var(--ink-soft)">DEPOSIT &amp; WORKING HOUR BY PLATFORM</p>
+        <p class="text-[9px] font-bold tracking-wider mb-1 text-center" style="color:var(--ink-soft)">DEPOSIT BY PLATFORM</p>
         <div class="w-full px-2" style="height:220px"><canvas id="platformBarChart"></canvas></div>
       </div>
 
@@ -168,16 +161,6 @@
         <div>
           <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">TIP RECEIVED (RM)</label>
           <input type="number" step="0.01" id="addTips" placeholder="0.00 (optional)" class="plain w-full py-1.5 text-sm">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">TIME START (24H)</label>
-            <input type="time" id="addTimeStart" step="60" required class="plain w-full py-1.5 text-sm">
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">TIME END (24H)</label>
-            <input type="time" id="addTimeEnd" step="60" required class="plain w-full py-1.5 text-sm">
-          </div>
         </div>
         <div>
           <label class="block text-[10px] font-bold tracking-wide mb-2" style="color:var(--ink-soft)">PLATFORM</label>
