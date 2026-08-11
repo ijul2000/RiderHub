@@ -29,7 +29,11 @@ let pendingPayload = null;
     // ================== API HELPER (GitHub Pages -> Google Apps Script Web App) ==================
     // API_URL ditakrifkan dalam index.html (sebelum <script src="script.js">)
     function apiGet(action) {
-      return fetch(API_URL + "?action=" + encodeURIComponent(action))
+      // BARU: tambah parameter "_ts" unik + cache:"no-store" supaya browser/Google TAK pulangkan
+      // response doGet yang di-cache lama — punca Working Hour pernah "stuck" pada data lapuk
+      // walaupun Code.gs dah betul & Sheet dah ada Time Start/Time End yang sah.
+      var cacheBuster = "&_ts=" + Date.now();
+      return fetch(API_URL + "?action=" + encodeURIComponent(action) + cacheBuster, { cache: "no-store" })
         .then(function(res) { return res.json(); });
     }
 
