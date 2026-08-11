@@ -30,8 +30,7 @@ let pendingPayload = null;
     // API_URL ditakrifkan dalam index.html (sebelum <script src="script.js">)
     function apiGet(action) {
       // BARU: tambah parameter "_ts" unik + cache:"no-store" supaya browser/Google TAK pulangkan
-      // response doGet yang di-cache lama — punca Working Hour pernah "stuck" pada data lapuk
-      // walaupun Code.gs dah betul & Sheet dah ada Time Start/Time End yang sah.
+      // response doGet yang di-cache lama.
       var cacheBuster = "&_ts=" + Date.now();
       return fetch(API_URL + "?action=" + encodeURIComponent(action) + cacheBuster, { cache: "no-store" })
         .then(function(res) { return res.json(); });
@@ -80,7 +79,6 @@ let pendingPayload = null;
     function loadSheetTotals() {
       apiGet("getDashboardData").then(function(res) {
         if(res.error) { showToast(res.error, "error"); return; }
-        console.log("RIDERHUB_DEBUG raw response history summary:", JSON.stringify((res.history || []).map(l => ({date: l.date, type: l.type, category: l.category, amount: l.amount, hoursWorked: l.hoursWorked})))); // BARU: debug sementara — buang lepas siap
         console.log("RIDERHUB_DEBUG history count:", (res.history || []).length);
         masterCachedHistoryLogs = res.history || [];
         buildYearFilterDropdowns();
@@ -103,13 +101,11 @@ let pendingPayload = null;
         return true;
       });
       console.log("RIDERHUB_DEBUG periodLogs count:", periodLogs.length); // BARU: debug sementara
-      console.log("RIDERHUB_DEBUG periodLogs summary:", JSON.stringify(periodLogs.map(l => ({date: l.date, type: l.type, category: l.category, amount: l.amount, hoursWorked: l.hoursWorked}))));
 
       let uniqueWorkingDates = {};
       let filteredLogs;
-      let tipsSum = 0, fuelSum = 0, lainSum = 0, hoursSum = 0;
+      let tipsSum = 0, fuelSum = 0, lainSum = 0;
       let grabEarningSum = 0, shopeeEarningSum = 0, lalamoveEarningSum = 0, foodpandaEarningSum = 0;
-      let grabHoursSum = 0, shopeeHoursSum = 0, lalamoveHoursSum = 0, foodpandaHoursSum = 0;
       let netEarningResult = 0, totalExpenseSum = 0;
       let remainingSaving = 0, remainingLoan = 0;
       let showBlankExpenseAllocation = false;
@@ -130,13 +126,12 @@ let pendingPayload = null;
           savingExpenseSum += log.savingRaw;
           loanExpenseSum += log.loanRaw;
           lainSum += log.lainRaw || 0;
-          hoursSum += log.hoursWorked || 0;
 
           if (log.type === "Deposit") {
-            if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; grabHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; shopeeHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; lalamoveHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; foodpandaHoursSum += log.hoursWorked || 0; }
+            if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; }
+            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; }
+            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; }
+            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; }
           }
         });
 
@@ -166,12 +161,11 @@ let pendingPayload = null;
           if (log.type === "Deposit" && log.category === selectedPlatform) {
             netEarningResult += log.netEarningRaw;
             tipsSum += log.tipsRaw;
-            hoursSum += log.hoursWorked || 0;
             uniqueWorkingDates[log.date] = true;
-            if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; grabHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; shopeeHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; lalamoveHoursSum += log.hoursWorked || 0; }
-            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; foodpandaHoursSum += log.hoursWorked || 0; }
+            if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; }
+            else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; }
+            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; }
+            else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; }
           }
         });
 
@@ -182,8 +176,6 @@ let pendingPayload = null;
       lastFilteredLogs = filteredLogs; // BARU: simpan untuk dipakai oleh modal "Lihat Semua"
 
       document.getElementById('lblWorkingDays').innerText = Object.keys(uniqueWorkingDates).length + " Days";
-      console.log("RIDERHUB_DEBUG hoursSum before display:", hoursSum); // BARU: debug sementara
-      document.getElementById('lblWorkingHour').innerText = formatHoursToHM(hoursSum);
 
       document.getElementById('lblNetEarning').innerText = "RM " + fmt2_(netEarningResult);
       document.getElementById('lblTips').innerText = "RM " + fmt2_(tipsSum);
@@ -197,8 +189,7 @@ let pendingPayload = null;
       updateCharts({
         netEarning: netEarningResult, tips: tipsSum, expenses: totalExpenseSum,
         saving: remainingSaving, loan: remainingLoan,
-        grabEarning: grabEarningSum, shopeeEarning: shopeeEarningSum, lalamoveEarning: lalamoveEarningSum, foodpandaEarning: foodpandaEarningSum,
-        grabHours: grabHoursSum, shopeeHours: shopeeHoursSum, lalamoveHours: lalamoveHoursSum, foodpandaHours: foodpandaHoursSum
+        grabEarning: grabEarningSum, shopeeEarning: shopeeEarningSum, lalamoveEarning: lalamoveEarningSum, foodpandaEarning: foodpandaEarningSum
       });
     }
 
@@ -267,21 +258,12 @@ let pendingPayload = null;
       if (existingYears.includes(parseInt(prevMainSelection))) mainYearSelect.value = prevMainSelection;
     }
 
-    // BARU: tukar jam perpuluhan (cth 4.0833) kepada format "4h 5m" supaya tak mengelirukan
-    function formatHoursToHM(decimalHours) {
-      let totalMinutes = Math.round(decimalHours * 60);
-      let h = Math.floor(totalMinutes / 60);
-      let m = totalMinutes % 60;
-      return h + "h " + m + "m";
-    }
-
     function updateCharts(data) {
       const colors = { sage:'#9CAF88', sageLight:'#c9d6bd', rose:'#d9a5a0', slate:'#a7b4c4', slateLight:'#c6d0da', mustard:'#d9b26a' };
-      const chartOptions = { responsive: true, maintainAspectRatio: true, plugins: { legend: { display:false } } };
 
       if(chartPlatformBar) chartPlatformBar.destroy();
 
-      // BARU: bar chart Deposit (RM) & Working Hour setiap platform, guna dua axis (RM di kiri, Jam di kanan)
+      // Bar chart Deposit (RM) setiap platform
       var barCtx = document.getElementById('platformBarChart');
       if(barCtx) {
         chartPlatformBar = new Chart(barCtx.getContext('2d'), {
@@ -293,14 +275,6 @@ let pendingPayload = null;
                 label: 'Deposit (RM)',
                 data: [data.grabEarning, data.shopeeEarning, data.lalamoveEarning, data.foodpandaEarning],
                 backgroundColor: colors.sage,
-                yAxisID: 'y',
-                borderRadius: 4
-              },
-              {
-                label: 'Working Hour',
-                data: [data.grabHours, data.shopeeHours, data.lalamoveHours, data.foodpandaHours],
-                backgroundColor: colors.mustard,
-                yAxisID: 'y1',
                 borderRadius: 4
               }
             ]
@@ -309,17 +283,11 @@ let pendingPayload = null;
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                display: true, position: 'bottom', align: 'center',
-                labels: { boxWidth: 6, font: { size: 8 }, padding: 6 }
-              },
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   label: function(ctx) {
-                    if (ctx.dataset.label === 'Deposit (RM)') {
-                      return 'Deposit: RM ' + Number(ctx.parsed.y).toFixed(2);
-                    }
-                    return 'Working Hour: ' + formatHoursToHM(ctx.parsed.y);
+                    return 'Deposit: RM ' + Number(ctx.parsed.y).toFixed(2);
                   }
                 }
               }
@@ -327,15 +295,9 @@ let pendingPayload = null;
             scales: {
               x: { ticks: { font: { size: 9 } }, grid: { display: false } },
               y: {
-                type: 'linear', position: 'left', beginAtZero: true,
+                beginAtZero: true,
                 title: { display: true, text: 'RM', font: { size: 8 } },
                 ticks: { font: { size: 8 } }
-              },
-              y1: {
-                type: 'linear', position: 'right', beginAtZero: true,
-                title: { display: true, text: 'Hours', font: { size: 8 } },
-                ticks: { font: { size: 8 } },
-                grid: { drawOnChartArea: false }
               }
             }
           }
@@ -397,9 +359,7 @@ let pendingPayload = null;
           date: document.getElementById('addDate').value,
           amount: document.getElementById('addAmount').value,
           tips: document.getElementById('addTips').value || 0,
-          platform: document.getElementById('selectedPlatform').value,
-          timeStart: document.getElementById('addTimeStart').value,
-          timeEnd: document.getElementById('addTimeEnd').value
+          platform: document.getElementById('selectedPlatform').value
         };
         iconContainer.style.background = 'var(--sage-bg)'; iconContainer.style.color = 'var(--sage-dark)';
         icon.className = "fa-solid fa-cloud-arrow-up";
@@ -520,12 +480,10 @@ let pendingPayload = null;
         });
         y += 8;
 
-        // WORKING DAYS & HOURS
+        // WORKING DAYS
         doc.setFont('courier', 'bold');
         doc.setFontSize(10);
         doc.text('Working Days: ' + document.getElementById('lblWorkingDays').innerText, marginX, y);
-        y += 14;
-        doc.text('Working Hour: ' + document.getElementById('lblWorkingHour').innerText, marginX, y);
         y += 18;
 
         doc.setDrawColor(200, 195, 178);
