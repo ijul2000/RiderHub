@@ -83,6 +83,7 @@
       font-size:12px;
     }
     .header-btn:active{ transform: scale(0.92); opacity:.7; }
+    .header-btn:disabled{ opacity:.5; cursor:default; }
     .header-btn-deposit{
       color: var(--sage-dark);
     }
@@ -91,6 +92,17 @@
     }
     .header-btn-export{
       color: var(--ink-soft);
+    }
+    .header-btn-refresh{
+      color: var(--slate);
+    }
+    /* BARU: animasi putar ikon refresh semasa data sedang dimuat semula */
+    .header-btn-refresh i.is-spinning{
+      animation: spin_refresh_ .7s linear infinite;
+    }
+    @keyframes spin_refresh_{
+      from{ transform: rotate(0deg); }
+      to{ transform: rotate(360deg); }
     }
 
     /* BARU: animasi hover khusus untuk desktop (peranti dengan cursor/mouse) sahaja — tidak sentuh mobile/tablet sentuh */
@@ -101,6 +113,7 @@
       .header-btn-deposit:hover i{ transform: scale(1.2); }
       .header-btn-withdraw:hover i{ transform: scale(1.2); }
       .header-btn-export:hover i{ transform: scale(1.2); }
+      .header-btn-refresh:hover i:not(.is-spinning){ transform: scale(1.2); }
     }
 
     /* BARU: saiz butang header khusus untuk mobile (<640px) sahaja — tablet/desktop tidak terjejas */
