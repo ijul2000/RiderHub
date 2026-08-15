@@ -470,7 +470,7 @@ let pendingPayload = null;
         doc.setFontSize(9);
         const earningsRows = [
           ['Net Earning', document.getElementById('lblNetEarning').innerText],
-          ['Tip Received', document.getElementById('lblTips').innerText],
+          ['Tip Received/Incentive', document.getElementById('lblTips').innerText],
           ['Expense', document.getElementById('lblExpenses').innerText]
         ];
         earningsRows.forEach(row => {
