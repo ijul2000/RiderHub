@@ -120,7 +120,7 @@ let pendingPayload = null;
       let uniqueWorkingDates = {};
       let filteredLogs;
       let tipsSum = 0, fuelSum = 0, lainSum = 0;
-      let grabEarningSum = 0, shopeeEarningSum = 0, lalamoveEarningSum = 0, foodpandaEarningSum = 0;
+      let grabEarningSum = 0, shopeeEarningSum = 0, foodpandaEarningSum = 0;
       let netEarningResult = 0, totalExpenseSum = 0;
       let remainingSaving = 0, remainingLoan = 0;
       let showBlankExpenseAllocation = false;
@@ -145,10 +145,12 @@ let pendingPayload = null;
           if (log.type === "Deposit") {
             if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; }
             else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; }
-            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; }
             else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; }
           }
         });
+
+        // BARU: Net Earning kini termasuk Tip Received sekali
+        rawNetEarningSum += tipsSum;
 
         // Allocation: peratusan dari Net Earning selepas tolak Fuel & Lain-Lain, kemudian tolak withdrawal kategori sendiri
         let netEarningAfterFuelLain = rawNetEarningSum - fuelSum - lainSum;
@@ -169,7 +171,7 @@ let pendingPayload = null;
         remainingLoan = loanCents_ / 100;
 
       } else {
-        // ---- PAPARAN IKUT PLATFORM (GrabFood / ShopeeFood / Lalamove) ----
+        // ---- PAPARAN IKUT PLATFORM (GrabFood / ShopeeFood / FoodPanda) ----
         showBlankExpenseAllocation = true;
 
         periodLogs.forEach(log => {
@@ -179,13 +181,16 @@ let pendingPayload = null;
             uniqueWorkingDates[log.date] = true;
             if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; }
             else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; }
-            else if (log.category === "Lalamove") { lalamoveEarningSum += log.netEarningRaw; }
             else if (log.category === "FoodPanda") { foodpandaEarningSum += log.netEarningRaw; }
           }
         });
 
         // Transaction log ikut platform: deposit platform terpilih sahaja
         filteredLogs = periodLogs.filter(log => log.type === "Deposit" && log.category === selectedPlatform);
+
+        // BARU: Net Earning kini termasuk Tip Received sekali (sama macam paparan ALL)
+        netEarningResult += tipsSum;
+
       }
 
       lastFilteredLogs = filteredLogs; // BARU: simpan untuk dipakai oleh modal "Lihat Semua"
@@ -204,7 +209,7 @@ let pendingPayload = null;
       updateCharts({
         netEarning: netEarningResult, tips: tipsSum, expenses: totalExpenseSum,
         saving: remainingSaving, loan: remainingLoan,
-        grabEarning: grabEarningSum, shopeeEarning: shopeeEarningSum, lalamoveEarning: lalamoveEarningSum, foodpandaEarning: foodpandaEarningSum
+        grabEarning: grabEarningSum, shopeeEarning: shopeeEarningSum, foodpandaEarning: foodpandaEarningSum
       });
     }
 
@@ -284,11 +289,11 @@ let pendingPayload = null;
         chartPlatformBar = new Chart(barCtx.getContext('2d'), {
           type: 'bar',
           data: {
-            labels: ['GrabFood', 'ShopeeFood', 'Lalamove', 'FoodPanda'],
+            labels: ['GrabFood', 'ShopeeFood', 'FoodPanda'],
             datasets: [
               {
                 label: 'Deposit (RM)',
-                data: [data.grabEarning, data.shopeeEarning, data.lalamoveEarning, data.foodpandaEarning],
+                data: [data.grabEarning, data.shopeeEarning, data.foodpandaEarning],
                 backgroundColor: colors.sage,
                 borderRadius: 4
               }
@@ -342,7 +347,6 @@ let pendingPayload = null;
       const platformCardStyles = {
         GrabFood:   { el: document.getElementById('cardGrab'),     border: 'var(--sage)',    bg: 'var(--sage-bg)',    text: 'var(--sage-dark)' },
         ShopeeFood: { el: document.getElementById('cardShopee'),   border: 'var(--mustard)', bg: 'var(--mustard-bg)', text: '#a97e2f' },
-        Lalamove:   { el: document.getElementById('cardLalamove'), border: 'var(--rose)',    bg: 'var(--rose-bg)',    text: 'var(--rose-dark)' },
         FoodPanda:  { el: document.getElementById('cardFoodPanda'), border: 'var(--panda)',   bg: 'var(--panda-bg)',   text: 'var(--panda-dark)' }
       };
 
@@ -434,7 +438,7 @@ let pendingPayload = null;
 
         doc.setFont('courier', 'normal');
         doc.setFontSize(9);
-        doc.text('GrabFood x ShopeeFood x Lalamove x FoodPanda — Earnings Slip', pageWidth / 2, y, { align: 'center' });
+        doc.text('GrabFood x ShopeeFood x FoodPanda — Earnings Slip', pageWidth / 2, y, { align: 'center' });
         y += 12;
         doc.text('Generated: ' + document.getElementById('lblPrintedOn').innerText.trim(), pageWidth / 2, y, { align: 'center' });
         y += 18;
