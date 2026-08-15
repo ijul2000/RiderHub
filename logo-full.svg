@@ -1,0 +1,71 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="zig">
+      <path d="
+        M 40 34
+        L 52 20 L 64 34 L 76 20 L 88 34 L 100 20 L 112 34 L 124 20 L 136 34 L 148 20 L 160 34 L 172 20 L 184 34 L 196 20 L 208 34 L 220 20 L 232 34 L 244 20 L 256 34 L 268 20 L 280 34 L 292 20 L 304 34 L 316 20 L 328 34 L 340 20 L 352 34 L 364 20 L 376 34 L 388 20 L 400 34 L 412 20 L 424 34 L 436 20 L 448 34 L 460 20 L 472 34
+        L 472 478
+        L 460 492 L 448 478 L 436 492 L 424 478 L 412 492 L 400 478 L 388 492 L 376 478 L 364 492 L 352 478 L 340 492 L 328 478 L 316 492 L 304 478 L 292 492 L 280 478 L 268 492 L 256 478 L 244 492 L 232 478 L 220 492 L 208 478 L 196 492 L 184 478 L 172 492 L 160 478 L 148 492 L 136 478 L 124 492 L 112 478 L 100 492 L 88 478 L 76 492 L 64 478 L 52 492 L 40 478
+        Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- paper receipt silhouette with zigzag top/bottom, drop shadow feel via layered rect -->
+  <g clip-path="url(#zig)">
+    <rect x="30" y="10" width="452" height="492" fill="#faf6ee"/>
+    <!-- subtle dot texture -->
+    <g fill="#e9e2d3">
+      <circle cx="70" cy="70" r="2.2"/><circle cx="110" cy="70" r="2.2"/><circle cx="150" cy="70" r="2.2"/><circle cx="190" cy="70" r="2.2"/><circle cx="230" cy="70" r="2.2"/><circle cx="270" cy="70" r="2.2"/><circle cx="310" cy="70" r="2.2"/><circle cx="350" cy="70" r="2.2"/><circle cx="390" cy="70" r="2.2"/><circle cx="430" cy="70" r="2.2"/>
+      <circle cx="70" cy="440" r="2.2"/><circle cx="110" cy="440" r="2.2"/><circle cx="150" cy="440" r="2.2"/><circle cx="190" cy="440" r="2.2"/><circle cx="230" cy="440" r="2.2"/><circle cx="270" cy="440" r="2.2"/><circle cx="310" cy="440" r="2.2"/><circle cx="350" cy="440" r="2.2"/><circle cx="390" cy="440" r="2.2"/><circle cx="430" cy="440" r="2.2"/>
+    </g>
+
+    <!-- dashed divider lines top and bottom of the emblem zone -->
+    <line x1="66" y1="120" x2="446" y2="120" stroke="#d8cfba" stroke-width="5" stroke-dasharray="14 12"/>
+    <line x1="66" y1="392" x2="446" y2="392" stroke="#d8cfba" stroke-width="5" stroke-dasharray="14 12"/>
+
+    <!-- sage badge circle -->
+    <circle cx="256" cy="256" r="118" fill="#eef2e6"/>
+    <circle cx="256" cy="256" r="118" fill="none" stroke="#9CAF88" stroke-width="6" stroke-dasharray="10 9"/>
+
+    <!-- scooter / rider glyph, ink colored -->
+    <g transform="translate(256,258)" fill="none" stroke="#4a4438" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+      <!-- wheels -->
+      <circle cx="-78" cy="58" r="34" fill="#faf6ee"/>
+      <circle cx="82" cy="58" r="34" fill="#faf6ee"/>
+      <!-- body -->
+      <path d="M -78 58 L -30 58 L 10 -8 L 60 -8"/>
+      <path d="M 10 -8 L 34 58 L 82 58"/>
+      <path d="M -30 58 L 34 58"/>
+      <!-- seat -->
+      <path d="M -6 -8 L -46 -8"/>
+      <!-- handlebar -->
+      <path d="M 60 -8 L 60 -34 M 46 -40 L 74 -40"/>
+      <!-- kick stand accent -->
+      <circle cx="-78" cy="58" r="10" fill="#4a4438"/>
+      <circle cx="82" cy="58" r="10" fill="#4a4438"/>
+    </g>
+
+    <!-- small mustard coin accent -->
+    <circle cx="358" cy="164" r="26" fill="#d9b26a" stroke="#faf6ee" stroke-width="6"/>
+    <text x="358" y="173" font-family="Courier Prime, monospace" font-size="26" font-weight="700" fill="#4a4438" text-anchor="middle">$</text>
+
+    <!-- barcode strip at bottom -->
+    <g fill="#4a4438" opacity="0.55">
+      <rect x="96" y="416" width="4" height="18"/>
+      <rect x="104" y="416" width="2" height="18"/>
+      <rect x="112" y="416" width="6" height="18"/>
+      <rect x="124" y="416" width="2" height="18"/>
+      <rect x="132" y="416" width="4" height="18"/>
+      <rect x="142" y="416" width="2" height="18"/>
+      <rect x="150" y="416" width="6" height="18"/>
+      <rect x="162" y="416" width="4" height="18"/>
+      <rect x="172" y="416" width="2" height="18"/>
+      <rect x="180" y="416" width="4" height="18"/>
+      <rect x="190" y="416" width="6" height="18"/>
+      <rect x="202" y="416" width="2" height="18"/>
+    </g>
+
+    <!-- RIDER HUB wordmark -->
+    <text x="256" y="376" font-family="Courier Prime, monospace" font-size="30" font-weight="700" letter-spacing="4" fill="#4a4438" text-anchor="middle">RIDER HUB</text>
+  </g>
+</svg>
