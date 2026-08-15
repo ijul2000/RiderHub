@@ -35,7 +35,7 @@
         <div class="text-center">
           <div class="text-amber-700/70 text-2xl mb-1"><i class="fa-solid fa-motorcycle"></i></div>
           <h1 class="receipt-font font-bold tracking-widest text-lg uppercase">Rider Hub</h1>
-          <p class="text-[11px] text-ink-soft tracking-wide" style="color:var(--ink-soft)">GrabFood × ShopeeFood × Lalamove × FoodPanda</p>
+          <p class="text-[11px] text-ink-soft tracking-wide" style="color:var(--ink-soft)">GrabFood × ShopeeFood × FoodPanda</p>
           <p class="text-[10px] mt-1" style="color:var(--ink-soft)" id="lblPrintedOn">-- / -- / ----</p>
         </div>
 
@@ -75,7 +75,6 @@
           <option value="ALL">All Platforms</option>
           <option value="GrabFood">GrabFood</option>
           <option value="ShopeeFood">ShopeeFood</option>
-          <option value="Lalamove">Lalamove</option>
           <option value="FoodPanda">FoodPanda</option>
         </select>
       </div>
@@ -168,7 +167,7 @@
         <div>
           <label class="block text-[10px] font-bold tracking-wide mb-2" style="color:var(--ink-soft)">PLATFORM</label>
           <input type="hidden" id="selectedPlatform" value="GrabFood">
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-3 gap-2">
             <div id="cardGrab" onclick="selectPlatformCard('GrabFood')" class="rounded-lg p-3 text-center cursor-pointer border-2" style="border-color:var(--sage); background:var(--sage-bg)">
               <i class="fa-solid fa-motorcycle mb-1" style="color:var(--sage-dark)"></i>
               <p class="text-[11px] font-bold" style="color:var(--sage-dark)">GrabFood</p>
@@ -176,10 +175,6 @@
             <div id="cardShopee" onclick="selectPlatformCard('ShopeeFood')" class="rounded-lg p-3 text-center cursor-pointer border-2 border-transparent" style="background:#f4f0e6">
               <i class="fa-solid fa-bag-shopping mb-1" style="color:var(--mustard)"></i>
               <p class="text-[11px] font-bold" style="color:var(--ink-soft)">ShopeeFood</p>
-            </div>
-            <div id="cardLalamove" onclick="selectPlatformCard('Lalamove')" class="rounded-lg p-3 text-center cursor-pointer border-2 border-transparent" style="background:#f4f0e6">
-              <i class="fa-solid fa-truck-fast mb-1" style="color:var(--rose-dark)"></i>
-              <p class="text-[11px] font-bold" style="color:var(--ink-soft)">Lalamove</p>
             </div>
             <div id="cardFoodPanda" onclick="selectPlatformCard('FoodPanda')" class="rounded-lg p-3 text-center cursor-pointer border-2 border-transparent" style="background:#f4f0e6">
               <i class="fa-solid fa-drumstick-bite mb-1" style="color:var(--panda-dark)"></i>
