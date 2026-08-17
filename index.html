@@ -1,517 +1,274 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prime Flix — Unlimited Streaming</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rider Hub — Receipt</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Logo / favicon / shortcut icon (guna gambar sama macam page) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#faf6ee">
 </head>
-<body>
+<body class="min-h-screen pb-6">
 
-<!-- HEADER -->
-<header class="site-header" id="siteHeader">
-  <div class="header-inner">
+  <div class="max-w-3xl mx-auto px-4 pt-6">
 
-    <a href="#" class="logo" aria-label="Prime Flix - Home">
-      <svg class="logo-mark" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17 0C7.6 0 0 7.6 0 17s7.6 17 17 17 17-7.6 17-17S26.4 0 17 0Z" fill="url(#pfGrad)"/>
-        <path d="M13 9.5 25 17l-12 7.5V9.5Z" fill="#0A0A0A"/>
-        <defs>
-          <linearGradient id="pfGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F3D27A"/>
-            <stop offset="1" stop-color="#B9862F"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <span class="logo-word">PRIME<span class="logo-word-accent">FLIX</span></span>
-    </a>
+    <!-- RECEIPT CARD -->
+    <div class="receipt-card rounded-sm px-6 sm:px-10 pt-8 pb-3">
+      <div class="zig-top"></div>
 
-    <nav class="main-nav" id="mainNav">
-      <a href="#movies" class="nav-link active">Movie</a>
-      <a href="#tvshows" class="nav-link">TV Show</a>
-      <button type="button" class="nav-link" id="watchListBtn">Watch List</button>
-    </nav>
+      <!-- HEADER -->
+      <div class="mb-4">
+        <div class="text-center">
+          <div class="text-amber-700/70 text-2xl mb-1"><i class="fa-solid fa-motorcycle"></i></div>
+          <h1 class="receipt-font font-bold tracking-widest text-lg uppercase">Rider Hub</h1>
+          <p class="text-[11px] text-ink-soft tracking-wide" style="color:var(--ink-soft)">GrabFood × ShopeeFood × FoodPanda</p>
+          <p class="text-[10px] mt-1" style="color:var(--ink-soft)" id="lblPrintedOn">-- / -- / ----</p>
+        </div>
 
-    <div class="header-actions">
-      <form class="search-form" id="searchForm" role="search" autocomplete="off">
-        <button type="submit" class="search-icon-btn" aria-label="Search">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.6"/>
-            <line x1="12.6" y1="12.6" x2="17" y2="17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search titles, cast, genre..." role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="searchResults">
-        <div class="search-results" id="searchResults" role="listbox" hidden></div>
-      </form>
-
-      <div class="auth-area" id="authArea">
-        <button class="btn btn-secondary btn-sm" id="loginNavBtn" type="button">Login</button>
-      </div>
-
-      <button class="btn btn-secondary btn-sm admin-open-btn" id="openAdminBtn" type="button">Admin</button>
-
-      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-
-  </div>
-
-  <!-- Mobile nav drawer -->
-  <div class="mobile-nav" id="mobileNav">
-    <a href="#movies" class="nav-link">Movie</a>
-    <a href="#tvshows" class="nav-link">TV Show</a>
-    <button type="button" class="nav-link" id="watchListBtnMobile">Watch List</button>
-    <div class="auth-area auth-area-mobile" id="authAreaMobile">
-      <button type="button" class="nav-link" id="loginNavBtnMobile">Login</button>
-    </div>
-  </div>
-</header>
-
-<!-- HERO -->
-<section class="hero" id="heroSection">
-  <div class="hero-backdrop-img" id="heroBackdropImg"></div>
-  <div class="hero-backdrop"></div>
-  <div class="hero-content is-loading" id="heroContent">
-    <p class="hero-eyebrow" id="heroEyebrow">&nbsp;</p>
-    <h1 class="hero-title" id="heroTitle">The Last Night<br>in Rain City</h1>
-    <p class="hero-meta" id="heroMeta">2026 · Thriller</p>
-    <p class="hero-desc" id="heroDesc">A private detective has only one night to save the city before the final storm hits. A gripping thriller drama from start to finish.</p>
-    <div class="hero-actions">
-      <button class="btn btn-primary" id="heroWatchNowBtn" type="button">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9.5-5.5L4 2.5Z"/></svg>
-        Watch Now
-      </button>
-      <button class="btn btn-secondary" id="heroWatchlistBtn" type="button">+ My List</button>
-    </div>
-    <div class="hero-dots" id="heroDots"></div>
-  </div>
-</section>
-
-<!-- CONTENT ROWS -->
-<main class="content">
-
-  <section class="row-section" id="movies">
-    <div class="row-head">
-      <h2>Trending Movies</h2>
-    </div>
-    <div class="poster-grid" id="trendingGrid"></div>
-  </section>
-
-  <section class="row-section" id="tvshows" hidden>
-    <div class="row-head">
-      <h2>Trending TV Shows</h2>
-    </div>
-    <div class="poster-grid" id="tvTrendingGrid"></div>
-  </section>
-
-</main>
-
-<!-- FOOTER -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-logo">
-      <svg width="24" height="24" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17 0C7.6 0 0 7.6 0 17s7.6 17 17 17 17-7.6 17-17S26.4 0 17 0Z" fill="url(#pfGradFooter)"/>
-        <path d="M13 9.5 25 17l-12 7.5V9.5Z" fill="#0A0A0A"/>
-        <defs>
-          <linearGradient id="pfGradFooter" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F3D27A"/>
-            <stop offset="1" stop-color="#B9862F"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <span>PRIME<span class="logo-word-accent">FLIX</span></span>
-    </div>
-    <p class="footer-note">© 2026 Prime Flix. All rights reserved.</p>
-  </div>
-</footer>
-
-<!-- =========================================================
-     WATCH LIST MODAL — dipapar bila butang "Watch List" pada
-     navbar ditekan. Movie & TV Show diasingkan melalui tab.
-     ========================================================= -->
-<div class="modal-overlay" id="watchlistModalOverlay" hidden>
-  <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="watchlistModalTitle">
-    <div class="modal-head">
-      <h3 id="watchlistModalTitle">My List</h3>
-      <button class="modal-close" type="button" id="watchlistCloseBtn">&times;</button>
-    </div>
-
-    <div class="admin-filter-tabs" id="watchlistTabs">
-      <button type="button" class="filter-tab active" data-wl-tab="movie">Movie</button>
-      <button type="button" class="filter-tab" data-wl-tab="tvshow">TV Show</button>
-    </div>
-
-    <div class="admin-table-wrap">
-      <div class="admin-empty" id="watchlistEmpty" hidden>No titles in My List yet.</div>
-      <div class="poster-grid watchlist-grid" id="watchlistGrid"></div>
-    </div>
-  </div>
-</div>
-
-<!-- =========================================================
-     LOGIN MODAL
-     ========================================================= -->
-<div class="modal-overlay" id="loginModalOverlay" hidden>
-  <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
-    <div class="modal-head">
-      <h3 id="loginModalTitle">Login</h3>
-      <button class="modal-close" type="button" data-close-modal>&times;</button>
-    </div>
-    <form id="loginForm" class="admin-form" novalidate>
-      <label class="form-field">
-        <span>Username or Email <em>*</em></span>
-        <input type="text" name="Username" required placeholder="Your username or email" autocomplete="username">
-      </label>
-      <label class="form-field">
-        <span>Password <em>*</em></span>
-        <input type="password" name="Password" required placeholder="Your password" autocomplete="current-password">
-      </label>
-
-      <div class="form-error" data-form-error hidden></div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
-        <button type="submit" class="btn btn-primary" data-submit-btn>Login</button>
-      </div>
-
-      <p class="auth-switch">Don't have an account? <button type="button" class="auth-switch-link" id="goToRegisterBtn">Register</button></p>
-    </form>
-  </div>
-</div>
-
-<!-- =========================================================
-     REGISTER MODAL
-     ========================================================= -->
-<div class="modal-overlay" id="registerModalOverlay" hidden>
-  <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="registerModalTitle">
-    <div class="modal-head">
-      <h3 id="registerModalTitle">Register</h3>
-      <button class="modal-close" type="button" data-close-modal>&times;</button>
-    </div>
-    <form id="registerForm" class="admin-form" novalidate>
-      <label class="form-field">
-        <span>Username <em>*</em></span>
-        <input type="text" name="Username" required placeholder="Choose a username" autocomplete="username" minlength="3">
-      </label>
-      <label class="form-field">
-        <span>Email <em>*</em></span>
-        <input type="email" name="Email" required placeholder="you@example.com" autocomplete="email">
-      </label>
-      <label class="form-field">
-        <span>Password <em>*</em></span>
-        <input type="password" name="Password" required placeholder="At least 6 characters" autocomplete="new-password" minlength="6">
-      </label>
-      <label class="form-field">
-        <span>Confirm Password <em>*</em></span>
-        <input type="password" name="ConfirmPassword" required placeholder="Re-enter your password" autocomplete="new-password" minlength="6">
-      </label>
-
-      <div class="form-error" data-form-error hidden></div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
-        <button type="submit" class="btn btn-primary" data-submit-btn>Register</button>
-      </div>
-
-      <p class="auth-switch">Already have an account? <button type="button" class="auth-switch-link" id="goToLoginBtn">Login</button></p>
-    </form>
-  </div>
-</div>
-
-<!-- =========================================================
-     ADMIN PANEL (overlay, hidden until "Admin" button clicked)
-     ========================================================= -->
-<div class="admin-panel" id="adminPanel" hidden>
-
-  <header class="site-header admin-header">
-    <div class="header-inner">
-      <span class="admin-tag">Admin Panel</span>
-      <div class="header-actions">
-        <button class="btn btn-secondary btn-sm" id="closeAdminBtn" type="button">&larr; Back to Site</button>
-      </div>
-    </div>
-  </header>
-
-  <main class="admin-main">
-
-    <section class="admin-intro">
-      <div>
-        <p class="admin-eyebrow">Manage Content</p>
-        <h1>Add &amp; update titles</h1>
-        <p class="admin-sub">All changes are saved directly to your Google Sheet.</p>
-      </div>
-      <div class="admin-intro-actions">
-        <button class="btn btn-secondary" id="checkLinksBtn" type="button">Check Broken Links</button>
-        <button class="btn btn-primary" id="openAddChooserBtn" type="button">+ Add Title</button>
-      </div>
-    </section>
-
-    <div class="admin-status" id="apiStatus" hidden></div>
-
-    <section class="admin-library">
-      <div class="admin-library-head">
-        <h2>Title List</h2>
-        <form class="search-form admin-search-form" id="adminSearchForm" role="search">
-          <button type="submit" class="search-icon-btn" aria-label="Search">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.6"/>
-              <line x1="12.6" y1="12.6" x2="17" y2="17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-            </svg>
+        <!-- BARU: Butang Deposit/Withdraw/Export/Refresh — kini di bawah tarikh, susun sebaris & center, sama untuk semua saiz skrin -->
+        <div class="flex flex-row flex-wrap justify-center gap-x-4 gap-y-2 sm:gap-x-6 mt-3">
+          <button onclick="openModal('add')" class="header-btn header-btn-deposit">
+            <i class="fa-solid fa-plus"></i><span>DEPOSIT</span>
           </button>
-          <input type="text" class="search-input" id="adminSearchInput" placeholder="Search titles...">
-        </form>
-      </div>
-
-      <div class="admin-filter-tabs" id="filterTabs">
-        <button type="button" class="filter-tab active" data-filter="all">All</button>
-        <button type="button" class="filter-tab" data-filter="movie">Movies</button>
-        <button type="button" class="filter-tab" data-filter="tvshow">TV Series</button>
-      </div>
-
-      <div class="admin-table-wrap">
-        <div class="admin-empty" id="libraryEmpty" hidden>No titles found.</div>
-        <div class="admin-loading" id="libraryLoading">Loading list...</div>
-        <div class="admin-grid" id="libraryGrid"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- TYPE CHOOSER MODAL -->
-  <div class="modal-overlay" id="chooserOverlay" hidden>
-    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="chooserTitle">
-      <div class="modal-head">
-        <h3 id="chooserTitle">What would you like to add?</h3>
-        <button class="modal-close" type="button" data-close-modal>&times;</button>
-      </div>
-      <div class="chooser-options">
-        <button type="button" class="chooser-card" id="chooseMovieBtn">
-          <span class="chooser-icon">🎬</span>
-          <span class="chooser-label">Movie</span>
-          <span class="chooser-desc">Single movie</span>
-        </button>
-        <button type="button" class="chooser-card" id="chooseTvBtn">
-          <span class="chooser-icon">📺</span>
-          <span class="chooser-label">TV Show</span>
-          <span class="chooser-desc">Series with seasons &amp; episodes</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MOVIE FORM MODAL -->
-  <div class="modal-overlay" id="movieModalOverlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="movieModalTitle">
-      <div class="modal-head">
-        <h3 id="movieModalTitle">Add Movie</h3>
-        <button class="modal-close" type="button" data-close-modal>&times;</button>
-      </div>
-      <form id="movieForm" class="admin-form" novalidate>
-        <input type="hidden" name="ID">
-
-        <div class="form-row form-row-split">
-          <label class="form-field">
-            <span>Movie Title <em>*</em></span>
-            <input type="text" name="Title" required placeholder="e.g.: The Last Night in Rain City">
-          </label>
-          <label class="form-field form-field-narrow">
-            <span>Year <em>*</em></span>
-            <input type="number" name="Year" required placeholder="2026" min="1900" max="2100">
-          </label>
+          <button onclick="openModal('withdraw')" class="header-btn header-btn-withdraw">
+            <i class="fa-solid fa-minus"></i><span>WITHDRAW</span>
+          </button>
+          <button onclick="confirmExportPdf()" class="header-btn header-btn-export">
+            <i class="fa-solid fa-file-pdf"></i><span>EXPORT PDF</span>
+          </button>
+          <button id="btnRefresh" onclick="refreshDashboard()" class="header-btn header-btn-refresh">
+            <i class="fa-solid fa-rotate" id="refreshIcon"></i><span>REFRESH</span>
+          </button>
         </div>
+      </div>
 
-        <label class="form-field">
-          <span>Synopsis <em>*</em></span>
-          <textarea name="Description" rows="4" required placeholder="Write a short synopsis..."></textarea>
-        </label>
+      <div class="dashed-div my-1.5"></div>
 
-        <label class="form-field">
-          <span>Genre <em>*</em></span>
-          <div class="tag-input" data-tag-input="movieGenre">
-            <div class="tag-list" data-tag-list></div>
-            <input type="text" class="tag-input-field" placeholder="Type genre &amp; press Enter (e.g.: Action)">
+      <!-- FILTER ROW -->
+      <div class="flex items-center justify-center flex-wrap gap-x-3 gap-y-1.5 mb-1 text-[11px]">
+        <span style="color:var(--ink-soft)"><i class="fa-solid fa-filter mr-1"></i>PERIOD</span>
+        <select id="mainFilterMonth" onchange="saveFilterSelection(); syncDashboardCalculations()" class="period-select cursor-pointer">
+          <option value="ALL">All Months</option>
+          <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+          <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+          <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="mainFilterYear" onchange="saveFilterSelection(); syncDashboardCalculations()" class="period-select cursor-pointer">
+          <option value="ALL">All Years</option>
+        </select>
+        <select id="mainFilterPlatform" onchange="saveFilterSelection(); syncDashboardCalculations()" class="period-select cursor-pointer">
+          <option value="ALL">All Platforms</option>
+          <option value="GrabFood">GrabFood</option>
+          <option value="ShopeeFood">ShopeeFood</option>
+          <option value="FoodPanda">FoodPanda</option>
+        </select>
+      </div>
+
+      <div class="dashed-div my-1.5"></div>
+
+      <!-- EARNINGS + ALLOCATION -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
+        <div class="mb-2 md:pr-8" style="border-right:0">
+          <p class="text-[10px] font-bold tracking-widest mb-2" style="color:var(--sage-dark)">EARNINGS</p>
+          <div class="space-y-1.5 text-[13px]">
+            <div class="dotted-row"><span>Net Earning</span><span class="fill"></span><span id="lblNetEarning" class="font-bold">RM 0.00</span></div>
+            <div class="dotted-row"><span>Tip Received/Incentive</span><span class="fill"></span><span id="lblTips" class="font-bold" style="color:var(--sage-dark)">RM 0.00</span></div>
+            <div class="dotted-row"><span>Expense</span><span class="fill"></span><span id="lblExpenses" class="font-bold" style="color:var(--rose-dark)">RM 0.00</span></div>
           </div>
-          <small>You can add more than one genre.</small>
-        </label>
-
-        <div class="form-row form-row-split">
-          <label class="form-field">
-            <span>Backdrop Image URL <em>*</em></span>
-            <input type="url" name="Backdrop" required placeholder="https://...">
-          </label>
-          <label class="form-field">
-            <span>Poster Image URL <em>*</em></span>
-            <input type="url" name="Poster" required placeholder="https://...">
-          </label>
         </div>
 
-        <div class="form-row form-row-split">
-          <label class="form-field">
-            <span>Movie Link URL <em>*</em></span>
-            <input type="url" name="Link" required placeholder="https://...">
-          </label>
-          <label class="form-field form-field-narrow">
-            <span>Badge</span>
-            <select name="Badge">
-              <option value="HD">HD</option>
-              <option value="4K">4K</option>
-              <option value="New">New</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="form-preview" data-preview>
-          <div class="form-preview-poster" data-preview-poster></div>
-          <div class="form-preview-backdrop" data-preview-backdrop></div>
-        </div>
-
-        <div class="form-error" data-form-error hidden></div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
-          <button type="submit" class="btn btn-primary" data-submit-btn>Save Movie</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- TV SHOW FORM MODAL -->
-  <div class="modal-overlay" id="tvModalOverlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tvModalTitle">
-      <div class="modal-head">
-        <h3 id="tvModalTitle">Add TV Show</h3>
-        <button class="modal-close" type="button" data-close-modal>&times;</button>
-      </div>
-      <form id="tvForm" class="admin-form" novalidate>
-        <input type="hidden" name="ID">
-
-        <div class="form-row form-row-split">
-          <label class="form-field">
-            <span>TV Show Title <em>*</em></span>
-            <input type="text" name="Title" required placeholder="e.g.: The House at the End of the Street">
-          </label>
-          <label class="form-field form-field-narrow">
-            <span>Year <em>*</em></span>
-            <input type="number" name="Year" required placeholder="2026" min="1900" max="2100">
-          </label>
-        </div>
-
-        <label class="form-field">
-          <span>Synopsis <em>*</em></span>
-          <textarea name="Description" rows="4" required placeholder="Write a short synopsis..."></textarea>
-        </label>
-
-        <label class="form-field">
-          <span>Genre <em>*</em></span>
-          <div class="tag-input" data-tag-input="tvGenre">
-            <div class="tag-list" data-tag-list></div>
-            <input type="text" class="tag-input-field" placeholder="Type genre &amp; press Enter (e.g.: Drama)">
+        <div class="mb-2 md:pl-8 md:border-l" style="border-color:#d8cfba; border-left-style:dashed;">
+          <p class="text-[10px] font-bold tracking-widest mb-2" style="color:var(--slate)">ALLOCATION REMAINING</p>
+          <div class="space-y-1.5 text-[13px]">
+            <div class="dotted-row"><span>Saving (30%)</span><span class="fill"></span><span id="lblSaving" class="font-bold">RM 0.00</span></div>
+            <div class="dotted-row"><span>Loan (70%)</span><span class="fill"></span><span id="lblLoan" class="font-bold">RM 0.00</span></div>
           </div>
-          <small>You can add more than one genre.</small>
-        </label>
-
-        <div class="form-row form-row-split">
-          <label class="form-field form-field-narrow">
-            <span>Season <em>*</em></span>
-            <input type="number" name="Season" required placeholder="1" min="1">
-          </label>
-          <label class="form-field form-field-narrow">
-            <span>Episode <em>*</em></span>
-            <input type="number" name="Episode" required placeholder="8" min="1">
-          </label>
         </div>
+      </div>
 
-        <div class="form-row form-row-split">
-          <label class="form-field">
-            <span>Backdrop Image URL <em>*</em></span>
-            <input type="url" name="Backdrop" required placeholder="https://...">
-          </label>
-          <label class="form-field">
-            <span>Poster Image URL <em>*</em></span>
-            <input type="url" name="Poster" required placeholder="https://...">
-          </label>
+      <div class="dashed-div my-3"></div>
+
+      <!-- WORKING DAYS -->
+      <div class="dotted-row text-[13px] mb-1">
+        <span><i class="fa-solid fa-calendar-check mr-1" style="color:var(--mustard)"></i>Working Days</span>
+        <span class="fill"></span>
+        <span id="lblWorkingDays" class="font-bold">0 Days</span>
+      </div>
+
+      <div class="dashed-div my-3"></div>
+
+      <!-- CHARTS -->
+      <div class="mb-1 -mx-6 sm:-mx-10">
+        <p class="text-[9px] font-bold tracking-wider mb-1 text-center" style="color:var(--ink-soft)">DEPOSIT BY PLATFORM</p>
+        <div class="w-full px-2" style="height:220px"><canvas id="platformBarChart"></canvas></div>
+      </div>
+
+      <div class="dashed-div my-3"></div>
+
+      <!-- TRANSACTIONS LOG -->
+      <div class="mb-1">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-[10px] font-bold tracking-widest" style="color:var(--ink-soft)"><i class="fa-solid fa-receipt mr-1"></i>TRANSACTION LOG</p>
+          <button onclick="openHistoryModal()" class="text-[10px] font-bold tracking-wide px-2.5 py-1 rounded-full flex items-center gap-1" style="background:var(--slate-bg); color:var(--ink-soft)">
+            <span>Lihat Semua</span><i class="fa-solid fa-chevron-right text-[8px]"></i>
+          </button>
         </div>
-
-        <div class="form-row form-row-split">
-          <label class="form-field">
-            <span>Movie Link URL <em>*</em></span>
-            <input type="url" name="Link" required placeholder="https://...">
-          </label>
-          <label class="form-field form-field-narrow">
-            <span>Badge</span>
-            <select name="Badge">
-              <option value="HD">HD</option>
-              <option value="4K">4K</option>
-              <option value="New">New</option>
-            </select>
-          </label>
+        <div id="historyList" class="space-y-2 max-h-96 overflow-y-auto scroll-thin pr-1 text-[12px]">
+          <div class="text-center py-6" style="color:var(--ink-soft)"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading slip...</div>
         </div>
+      </div>
 
-        <div class="form-preview" data-preview>
-          <div class="form-preview-poster" data-preview-poster></div>
-          <div class="form-preview-backdrop" data-preview-backdrop></div>
+      <div class="dashed-div my-3"></div>
+
+      <!-- FOOTER -->
+      <div class="text-center py-2">
+        <div class="barcode w-2/3 mx-auto mb-2"></div>
+        <p class="text-[9px] tracking-widest" style="color:var(--ink-soft)">THANK YOU FOR RIDING • KEEP THIS SLIP</p>
+      </div>
+
+      <div class="zig-bottom"></div>
+    </div>
+  </div>
+
+  <!-- ADD FUND MODAL -->
+  <div id="modalAdd" class="hidden fixed inset-0 modal-backdrop z-[90] flex items-center justify-center p-4">
+    <div class="receipt-card rounded-sm w-full max-w-sm px-5 pt-7 pb-5 relative">
+      <div class="zig-top"></div>
+      <button onclick="closeModal('add')" class="absolute top-3 right-3 text-sm" style="color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
+      <h3 class="text-center font-bold tracking-widest text-sm uppercase mb-4" style="color:var(--sage-dark)"><i class="fa-solid fa-square-plus mr-1.5"></i>Deposit</h3>
+      <form id="formAddFund" class="space-y-3" onsubmit="triggerConfirmation('add', event)">
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">DATE</label>
+          <input type="date" id="addDate" required class="plain w-full py-1.5 text-sm">
         </div>
-
-        <div class="form-error" data-form-error hidden></div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
-          <button type="submit" class="btn btn-primary" data-submit-btn>Save TV Show</button>
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">AMOUNT (RM)</label>
+          <input type="number" step="0.01" id="addAmount" placeholder="0.00" required class="plain w-full py-1.5 text-sm">
         </div>
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">TIP RECEIVED/INCENTIVE (RM)</label>
+          <input type="number" step="0.01" id="addTips" placeholder="0.00 (optional)" class="plain w-full py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-2" style="color:var(--ink-soft)">PLATFORM</label>
+          <input type="hidden" id="selectedPlatform" value="GrabFood">
+          <div class="grid grid-cols-3 gap-2">
+            <div id="cardGrab" onclick="selectPlatformCard('GrabFood')" class="rounded-lg p-3 text-center cursor-pointer border-2" style="border-color:var(--sage); background:var(--sage-bg)">
+              <i class="fa-solid fa-motorcycle mb-1" style="color:var(--sage-dark)"></i>
+              <p class="text-[11px] font-bold" style="color:var(--sage-dark)">GrabFood</p>
+            </div>
+            <div id="cardShopee" onclick="selectPlatformCard('ShopeeFood')" class="rounded-lg p-3 text-center cursor-pointer border-2 border-transparent" style="background:#f4f0e6">
+              <i class="fa-solid fa-bag-shopping mb-1" style="color:var(--mustard)"></i>
+              <p class="text-[11px] font-bold" style="color:var(--ink-soft)">ShopeeFood</p>
+            </div>
+            <div id="cardFoodPanda" onclick="selectPlatformCard('FoodPanda')" class="rounded-lg p-3 text-center cursor-pointer border-2 border-transparent" style="background:#f4f0e6">
+              <i class="fa-solid fa-drumstick-bite mb-1" style="color:var(--panda-dark)"></i>
+              <p class="text-[11px] font-bold" style="color:var(--ink-soft)">FoodPanda</p>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="w-full rounded-xl py-2.5 text-sm font-bold text-white mt-2" style="background:var(--sage-dark)">Submit</button>
       </form>
+      <div class="zig-bottom"></div>
     </div>
   </div>
 
-  <!-- BROKEN LINKS MODAL -->
-  <div class="modal-overlay" id="brokenLinksModalOverlay" hidden>
-    <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="brokenLinksTitle">
-      <div class="modal-head">
-        <h3 id="brokenLinksTitle">Link Check</h3>
-        <button class="modal-close" type="button" data-close-modal>&times;</button>
-      </div>
-      <p class="broken-links-note">Checks every Backdrop, Poster, and Movie/TV Show Link for all titles in the Google Sheet.</p>
-      <div class="broken-links-body" id="brokenLinksBody">
-        <div class="admin-loading" id="brokenLinksLoading" hidden>Checking links... this may take a moment.</div>
-        <div class="admin-empty" id="brokenLinksEmpty" hidden>All links are working fine.</div>
-        <div class="broken-links-list" id="brokenLinksList"></div>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" data-close-modal>Close</button>
-        <button type="button" class="btn btn-primary" id="recheckLinksBtn">Recheck</button>
-      </div>
+  <!-- WITHDRAW MODAL -->
+  <div id="modalWithdraw" class="hidden fixed inset-0 modal-backdrop z-[90] flex items-center justify-center p-4">
+    <div class="receipt-card rounded-sm w-full max-w-sm px-5 pt-7 pb-5 relative">
+      <div class="zig-top"></div>
+      <button onclick="closeModal('withdraw')" class="absolute top-3 right-3 text-sm" style="color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
+      <h3 class="text-center font-bold tracking-widest text-sm uppercase mb-4" style="color:var(--rose-dark)"><i class="fa-solid fa-square-minus mr-1.5"></i>Withdraw</h3>
+      <form id="formWithdrawFund" class="space-y-3" onsubmit="triggerConfirmation('withdraw', event)">
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">DATE</label>
+          <input type="date" id="withdrawDate" required class="plain w-full py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">AMOUNT (RM)</label>
+          <input type="number" step="0.01" id="withdrawAmount" placeholder="0.00" required class="plain w-full py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-2" style="color:var(--ink-soft)">CATEGORY</label>
+          <div class="grid grid-cols-2 gap-2 text-[11px] font-bold">
+            <label class="rounded-lg p-2 flex items-center gap-1.5 cursor-pointer" style="background:#f4f0e6"><input type="radio" name="withdrawCat" value="Fuel" checked><span>Fuel</span></label>
+            <label class="rounded-lg p-2 flex items-center gap-1.5 cursor-pointer" style="background:#f4f0e6"><input type="radio" name="withdrawCat" value="Saving"><span>Saving</span></label>
+            <label class="rounded-lg p-2 flex items-center gap-1.5 cursor-pointer" style="background:#f4f0e6"><input type="radio" name="withdrawCat" value="Loan"><span>Loan</span></label>
+            <label class="rounded-lg p-2 flex items-center gap-1.5 cursor-pointer" style="background:#f4f0e6"><input type="radio" name="withdrawCat" value="Lain-Lain"><span>Other</span></label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">NOTE / REFERENCE</label>
+          <input type="text" id="withdrawNote" placeholder="e.g. Petrol pump, engine oil (optional)" class="plain w-full py-1.5 text-sm">
+        </div>
+        <button type="submit" class="w-full rounded-xl py-2.5 text-sm font-bold text-white mt-2" style="background:var(--rose-dark)">Submit</button>
+      </form>
+      <div class="zig-bottom"></div>
     </div>
   </div>
 
-  <!-- DELETE CONFIRM MODAL -->
-  <div class="modal-overlay" id="deleteModalOverlay" hidden>
-    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
-      <div class="modal-head">
-        <h3 id="deleteModalTitle">Delete this title?</h3>
-        <button class="modal-close" type="button" data-close-modal>&times;</button>
+  <!-- FULL TRANSACTION HISTORY MODAL -->
+  <div id="modalHistory" class="hidden fixed inset-0 modal-backdrop z-[90] flex items-center justify-center p-4">
+    <div class="receipt-card rounded-sm w-full max-w-md relative flex flex-col" style="max-height:85vh;">
+      <div class="zig-top"></div>
+      <div class="px-5 pt-7 pb-3 flex-shrink-0">
+        <button onclick="closeHistoryModal()" class="absolute top-3 right-3 text-sm" style="color:var(--ink-soft)"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="text-center font-bold tracking-widest text-sm uppercase" style="color:var(--ink)"><i class="fa-solid fa-receipt mr-1.5"></i>Full Transaction Log</h3>
+        <p id="lblHistoryModalPeriod" class="text-center text-[10px] mt-1" style="color:var(--ink-soft)">All Months • All Years</p>
       </div>
-      <p class="delete-confirm-text">This action cannot be undone. The record will be permanently deleted from the Google Sheet.</p>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      <div class="dashed-div mx-5"></div>
+      <div id="historyListFull" class="px-5 py-3 space-y-2 overflow-y-auto scroll-thin text-[12px] flex-1">
+        <div class="text-center py-6" style="color:var(--ink-soft)">No entries.</div>
       </div>
+      <div class="dashed-div mx-5"></div>
+      <div class="px-5 py-3 flex-shrink-0">
+        <button onclick="closeHistoryModal()" class="w-full rounded-xl py-2.5 text-xs font-bold" style="background:#f0ebe0; color:var(--ink-soft)">Close</button>
+      </div>
+      <div class="zig-bottom"></div>
     </div>
   </div>
 
+  <!-- CONFIRMATION MODAL -->
+  <div id="confirmModal" class="hidden fixed inset-0 modal-backdrop z-[100] flex items-center justify-center p-4">
+    <div class="receipt-card rounded-sm max-w-xs w-full p-6 relative">
+      <div class="zig-top"></div>
+      <div id="confirmIconContainer" class="w-11 h-11 rounded-full flex items-center justify-center text-lg mb-3"><i id="confirmIcon" class="fa-solid"></i></div>
+      <h3 id="confirmTitle" class="text-sm font-bold uppercase tracking-wide mb-1">Confirm Transaction?</h3>
+      <p id="confirmMessage" class="text-[11px] mb-5 leading-relaxed" style="color:var(--ink-soft)"></p>
+      <div class="flex gap-2.5">
+        <button onclick="closeConfirmation()" class="flex-1 rounded-xl py-2 text-xs font-bold" style="background:#f0ebe0; color:var(--ink-soft)">Cancel</button>
+        <button id="confirmSubmitBtn" class="flex-1 text-white font-bold py-2 rounded-xl text-xs">Confirm</button>
+      </div>
+      <div class="zig-bottom"></div>
+    </div>
+  </div>
 
-</div>
+  <!-- TOAST -->
+  <div id="toastNotification" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-xs font-bold z-[110] opacity-0 pointer-events-none transition-all duration-300 translate-y-4" style="background:var(--ink); color:#faf6ee;">
+    <div id="toastIcon" class="w-4 h-4 rounded-full flex items-center justify-center text-[9px]"></div>
+    <span id="toastMsg">Action processed successfully</span>
+  </div>
 
-<div class="toast" id="toast" hidden></div>
 
-<script src="script.js"></script>
+  <script>
+  // Config: URL Web App Google Apps Script anda (dapatkan selepas deploy)
+  const API_URL = "https://script.google.com/macros/s/AKfycbyp9fA0ntKZXpZTszPKMfoMt0WHJU5GN7PqyJAA6Kr3zjWZ6v_1uFaqhIuzn-Oz5u-C/exec";
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
