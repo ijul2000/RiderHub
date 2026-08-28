@@ -39,11 +39,15 @@ let pendingPayload = null;
     function apiPost(action, payload) {
       // Guna Content-Type: text/plain supaya browser tak hantar CORS preflight (OPTIONS),
       // sebab Google Apps Script Web App tak sokong preflight dengan baik.
+      console.log("DEBUG apiPost REQUEST >>>", action, JSON.parse(JSON.stringify(payload)));
       return fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: action, payload: payload })
-      }).then(function(res) { return res.json(); });
+      }).then(function(res) { return res.json(); }).then(function(data) {
+        console.log("DEBUG apiPost RESPONSE <<<", action, data);
+        return data;
+      });
     }
     // ================================================================================
 
