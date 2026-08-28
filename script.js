@@ -39,15 +39,11 @@ let pendingPayload = null;
     function apiPost(action, payload) {
       // Guna Content-Type: text/plain supaya browser tak hantar CORS preflight (OPTIONS),
       // sebab Google Apps Script Web App tak sokong preflight dengan baik.
-      console.log("DEBUG apiPost REQUEST >>>", action, JSON.parse(JSON.stringify(payload)));
       return fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: action, payload: payload })
-      }).then(function(res) { return res.json(); }).then(function(data) {
-        console.log("DEBUG apiPost RESPONSE <<<", action, data);
-        return data;
-      });
+      }).then(function(res) { return res.json(); });
     }
     // ================================================================================
 
@@ -230,6 +226,24 @@ let pendingPayload = null;
           : `<span class="badge-withdraw px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide">WITHDRAW</span>`;
         const amtColor = isDeposit ? 'var(--sage-dark)' : 'var(--rose-dark)';
         const prefix = isDeposit ? '+ ' : '- ';
+
+        // BARU: kalau deposit ni ada Tip Received dan/atau Incentive, papar breakdown kecil sekali
+        let tipBreakdownHtml = "";
+        if (isDeposit && ((log.tipReceivedRaw || 0) > 0 || (log.incentiveRaw || 0) > 0)) {
+          let parts = "";
+          if ((log.tipReceivedRaw || 0) > 0) {
+            parts += `<div class="dotted-row text-[10px]" style="color:var(--sage-dark)">
+              <span>Tip Received</span><span class="fill"></span><span>+ RM ${Number(log.tipReceivedRaw).toFixed(2)}</span>
+            </div>`;
+          }
+          if ((log.incentiveRaw || 0) > 0) {
+            parts += `<div class="dotted-row text-[10px]" style="color:var(--sage-dark)">
+              <span>Incentive</span><span class="fill"></span><span>+ RM ${Number(log.incentiveRaw).toFixed(2)}</span>
+            </div>`;
+          }
+          tipBreakdownHtml = `<div class="space-y-0.5 mt-0.5">${parts}</div>`;
+        }
+
         html += `
           <div class="dashed-div pt-2">
             <div class="flex items-center justify-between mb-0.5">
@@ -240,6 +254,7 @@ let pendingPayload = null;
               <span class="fill"></span>
               <span class="font-bold" style="color:${amtColor}">${prefix}RM ${Number(log.amount).toFixed(2)}</span>
             </div>
+            ${tipBreakdownHtml}
             <div class="text-[10px] truncate" style="color:var(--ink-soft)" title="${log.note}">${log.note}</div>
           </div>
         `;
