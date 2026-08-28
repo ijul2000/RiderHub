@@ -224,7 +224,7 @@ let pendingPayload = null;
         const badge = isDeposit
           ? `<span class="badge-deposit px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide">DEPOSIT</span>`
           : `<span class="badge-withdraw px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wide">WITHDRAW</span>`;
-        const amtColor = isDeposit ? 'var(--sage-dark)' : 'var(--rose-dark)';
+        const amtColor = isDeposit ? 'var(--sage)' : 'var(--rose)';
         const prefix = isDeposit ? '+ ' : '- ';
 
         // BARU: kalau deposit ni ada Tip Received dan/atau Incentive, papar breakdown kecil sekali
@@ -232,12 +232,12 @@ let pendingPayload = null;
         if (isDeposit && ((log.tipReceivedRaw || 0) > 0 || (log.incentiveRaw || 0) > 0)) {
           let parts = "";
           if ((log.tipReceivedRaw || 0) > 0) {
-            parts += `<div class="dotted-row text-[10px]" style="color:var(--sage-dark)">
+            parts += `<div class="dotted-row text-[10px]" style="color:var(--sage)">
               <span>Tip Received</span><span class="fill"></span><span>+ RM ${Number(log.tipReceivedRaw).toFixed(2)}</span>
             </div>`;
           }
           if ((log.incentiveRaw || 0) > 0) {
-            parts += `<div class="dotted-row text-[10px]" style="color:var(--sage-dark)">
+            parts += `<div class="dotted-row text-[10px]" style="color:var(--sage)">
               <span>Incentive</span><span class="fill"></span><span>+ RM ${Number(log.incentiveRaw).toFixed(2)}</span>
             </div>`;
           }
@@ -298,7 +298,7 @@ let pendingPayload = null;
     }
 
     function updateCharts(data) {
-      const colors = { sage:'#9CAF88', sageLight:'#c9d6bd', rose:'#d9a5a0', slate:'#a7b4c4', slateLight:'#c6d0da', mustard:'#d9b26a' };
+      const colors = { sage:'#2dd4bf', sageLight:'#0f7d70', rose:'#ff9d52', slate:'#7fd4e0', slateLight:'#3d7d90', mustard:'#ffcf4d' };
 
       if(chartPlatformBar) chartPlatformBar.destroy();
 
@@ -364,9 +364,9 @@ let pendingPayload = null;
 
       // BARU: peta setiap platform ke card & warna aktifnya supaya senang tambah platform baru
       const platformCardStyles = {
-        GrabFood:   { el: document.getElementById('cardGrab'),     border: 'var(--sage)',    bg: 'var(--sage-bg)',    text: 'var(--sage-dark)' },
-        ShopeeFood: { el: document.getElementById('cardShopee'),   border: 'var(--mustard)', bg: 'var(--mustard-bg)', text: '#a97e2f' },
-        FoodPanda:  { el: document.getElementById('cardFoodPanda'), border: 'var(--panda)',   bg: 'var(--panda-bg)',   text: 'var(--panda-dark)' }
+        GrabFood:   { el: document.getElementById('cardGrab'),     border: 'var(--sage)',    bg: 'var(--sage-bg)',    text: 'var(--sage)' },
+        ShopeeFood: { el: document.getElementById('cardShopee'),   border: 'var(--mustard)', bg: 'var(--mustard-bg)', text: 'var(--mustard)' },
+        FoodPanda:  { el: document.getElementById('cardFoodPanda'), border: 'var(--panda)',   bg: 'var(--panda-bg)',   text: 'var(--panda)' }
       };
 
       Object.keys(platformCardStyles).forEach(key => {
@@ -378,7 +378,7 @@ let pendingPayload = null;
           style.el.querySelector('p').style.color = style.text;
         } else {
           style.el.style.borderColor = 'transparent';
-          style.el.style.background = '#f4f0e6';
+          style.el.style.background = 'var(--chip-bg)';
           style.el.querySelector('p').style.color = 'var(--ink-soft)';
         }
       });
@@ -400,7 +400,7 @@ let pendingPayload = null;
           tipType: document.querySelector('input[name="addTipType"]:checked').value,
           platform: document.getElementById('selectedPlatform').value
         };
-        iconContainer.style.background = 'var(--sage-bg)'; iconContainer.style.color = 'var(--sage-dark)';
+        iconContainer.style.background = 'var(--sage-bg)'; iconContainer.style.color = 'var(--sage)';
         icon.className = "fa-solid fa-cloud-arrow-up";
         submitBtn.style.background = 'var(--sage-dark)';
         message.innerText = `Add income entry of RM ${Number(pendingPayload.amount).toFixed(2)} (${pendingPayload.platform}) to your slip?`;
@@ -412,7 +412,7 @@ let pendingPayload = null;
           category: document.querySelector('input[name="withdrawCat"]:checked').value,
           note: document.getElementById('withdrawNote').value
         };
-        iconContainer.style.background = 'var(--rose-bg)'; iconContainer.style.color = 'var(--rose-dark)';
+        iconContainer.style.background = 'var(--rose-bg)'; iconContainer.style.color = 'var(--rose)';
         icon.className = "fa-solid fa-wallet";
         submitBtn.style.background = 'var(--rose-dark)';
         message.innerText = `Record withdrawal of RM ${Number(pendingPayload.amount).toFixed(2)} under '${pendingPayload.category}'?`;
@@ -430,9 +430,9 @@ let pendingPayload = null;
       const submitBtn = document.getElementById('confirmSubmitBtn');
       const message = document.getElementById('confirmMessage');
 
-      iconContainer.style.background = 'var(--slate-bg)'; iconContainer.style.color = 'var(--ink-soft)';
+      iconContainer.style.background = 'var(--slate-bg)'; iconContainer.style.color = 'var(--slate)';
       icon.className = "fa-solid fa-file-pdf";
-      submitBtn.style.background = 'var(--ink)';
+      submitBtn.style.background = 'var(--slate-dark)';
       message.innerText = "Export current earnings slip as PDF and download to your device?";
       submitBtn.onclick = function () {
         document.getElementById('confirmModal').classList.add('hidden');
@@ -463,7 +463,7 @@ let pendingPayload = null;
         doc.text('Generated: ' + document.getElementById('lblPrintedOn').innerText.trim(), pageWidth / 2, y, { align: 'center' });
         y += 18;
 
-        doc.setDrawColor(200, 195, 178);
+        doc.setDrawColor(150, 170, 175);
         doc.line(marginX, y, pageWidth - marginX, y);
         y += 22;
 
@@ -525,7 +525,7 @@ let pendingPayload = null;
         doc.text('Working Days: ' + document.getElementById('lblWorkingDays').innerText, marginX, y);
         y += 18;
 
-        doc.setDrawColor(200, 195, 178);
+        doc.setDrawColor(150, 170, 175);
         doc.line(marginX, y, pageWidth - marginX, y);
         y += 16;
 
@@ -548,8 +548,8 @@ let pendingPayload = null;
           head: [['Date', 'Type', 'Category', 'Amount', 'Note']],
           body: tableBody.length ? tableBody : [['-', '-', '-', '-', 'No entries for this period']],
           styles: { font: 'courier', fontSize: 8, cellPadding: 5, textColor: [74, 68, 56] },
-          headStyles: { fillColor: [116, 136, 98], textColor: [255, 255, 255] },
-          alternateRowStyles: { fillColor: [246, 242, 232] },
+          headStyles: { fillColor: [15, 125, 112], textColor: [255, 255, 255] },
+          alternateRowStyles: { fillColor: [234, 242, 241] },
           margin: { left: marginX, right: marginX }
         });
 
