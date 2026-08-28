@@ -171,18 +171,39 @@ let pendingPayload = null;
         latest.loanRemainingCents -= loanPoolCents;
       }
 
-      // Step 7: hasil akhir — nilai dalam ringgit (bukan sen), sedia untuk dipaparkan kelak
+      // Step 7: hasil akhir — nilai dalam ringgit (bukan sen), sedia untuk dipaparkan kelak.
+      // savingUsed/loanUsed = jumlah allocation bulan tu yang "telah dibelanjakan" (via FIFO) —
+      // inilah nilai yang digunakan untuk tolak Net Earning & tambah Expense bulan berkenaan,
+      // BUKAN jumlah withdrawal yang direkod pada bulan tu sendiri.
       monthlyAllocationRemaining = months.map(m => ({
         year: m.year,
         month: m.month,
         savingGenerated: m.savingGeneratedCents / 100,
         loanGenerated: m.loanGeneratedCents / 100,
         savingRemaining: m.savingRemainingCents / 100,
-        loanRemaining: m.loanRemainingCents / 100
+        loanRemaining: m.loanRemainingCents / 100,
+        savingUsed: (m.savingGeneratedCents - m.savingRemainingCents) / 100,
+        loanUsed: (m.loanGeneratedCents - m.loanRemainingCents) / 100
       }));
 
       // BARU: debug sementara — buka console untuk lihat breakdown per bulan (data ini hidden dari UI)
       console.log("RIDERHUB_DEBUG monthlyAllocationRemaining:", monthlyAllocationRemaining);
+    }
+
+    // BARU: jumlahkan savingUsed/loanUsed (dari FIFO) untuk bulan/tahun yang sepadan dengan filter
+    // dashboard semasa (selectedMonth/selectedYear). Inilah nilai "Saving/Loan" yang sepatutnya
+    // ditolak daripada Net Earning & ditambah pada Expense bagi tempoh yang ditapis — kerana ia
+    // mewakili bulan yang SEBENARNYA "terlibat" (kehabisan baki allocation), bukan bulan withdrawal
+    // itu direkod.
+    function sumMonthlyAllocationUsage_(selectedMonth, selectedYear) {
+      let usedSaving = 0, usedLoan = 0;
+      monthlyAllocationRemaining.forEach(m => {
+        if (selectedMonth !== "ALL" && String(m.month) !== selectedMonth) return;
+        if (selectedYear !== "ALL" && String(m.year) !== selectedYear) return;
+        usedSaving += m.savingUsed;
+        usedLoan += m.loanUsed;
+      });
+      return { usedSaving: usedSaving, usedLoan: usedLoan };
     }
 
     // BARU: Allocation Remaining (Saving 30% / Loan 70%) SENTIASA dikira dari SEMUA data
@@ -242,7 +263,7 @@ let pendingPayload = null;
 
       if (selectedPlatform === "ALL") {
         // ---- PAPARAN ALL PLATFORMS (kekal seperti asal) ----
-        let rawNetEarningSum = 0, savingExpenseSum = 0, loanExpenseSum = 0;
+        let rawNetEarningSum = 0;
 
         filteredLogs = periodLogs.filter(log => {
           if (log.type === "Deposit") uniqueWorkingDates[log.date] = true;
@@ -253,8 +274,9 @@ let pendingPayload = null;
           rawNetEarningSum += log.netEarningRaw;
           tipsSum += log.tipsRaw;
           fuelSum += log.fuelRaw;
-          savingExpenseSum += log.savingRaw;
-          loanExpenseSum += log.loanRaw;
+          // NOTA: savingRaw/loanRaw TIDAK lagi dijumlahkan di sini (ikut tarikh withdrawal).
+          // Digantikan dengan nilai FIFO (sumMonthlyAllocationUsage_) di bawah, supaya Saving/Loan
+          // "terpakai" dikira pada bulan yang SEBENARNYA kehabisan baki, bukan bulan withdrawal dibuat.
           lainSum += log.lainRaw || 0;
 
           if (log.type === "Deposit") {
@@ -267,11 +289,18 @@ let pendingPayload = null;
         // BARU: Net Earning kini termasuk Tip Received sekali
         rawNetEarningSum += tipsSum;
 
+        // BARU: Saving/Loan "terpakai" untuk EEARNINGS section (Net Earning & Expense) diambil
+        // ikut FIFO — bulan yang sepadan dengan filter semasa (bukan bulan withdrawal direkod).
+        const allocUsage = sumMonthlyAllocationUsage_(selectedMonth, selectedYear);
+        const savingExpenseSum = allocUsage.usedSaving;
+        const loanExpenseSum = allocUsage.usedLoan;
+
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
         netEarningResult = rawNetEarningSum - totalExpenseSum;
 
-        // NOTA: Saving/Loan TIDAK lagi dikira di sini ikut period yang difilter — kini
-        // sentiasa diambil dari calculateAllocationRemainingAllTime_() (semua bulan/tahun/platform).
+        // NOTA: Saving/Loan (ALLOCATION REMAINING di bawah) TIDAK dikira di sini ikut period yang
+        // difilter — kini sentiasa diambil dari calculateAllocationRemainingAllTime_() (semua
+        // bulan/tahun/platform), berasingan daripada savingExpenseSum/loanExpenseSum di atas.
         let netEarningCents_ = toCents_(netEarningResult);
         netEarningResult = netEarningCents_ / 100;
 
