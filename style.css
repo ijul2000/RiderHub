@@ -1,43 +1,38 @@
 :root{
-      --paper:#171c24;
-      --paper-shadow:#0d1117;
-      --line:#2a3542;
-      --chip-bg:#1f2731;
-      --ink:#eef3f4;
-      --ink-soft:#8996a3;
-      --sage:#2dd4bf;
-      --sage-dark:#0f7d70;
-      --sage-bg:#0f2b28;
-      --rose:#ff9d52;
-      --rose-dark:#b8551b;
-      --rose-bg:#2e1c0d;
-      --mustard:#ffcf4d;
-      --mustard-dark:#a97e1a;
-      --mustard-bg:#2e2308;
-      --slate:#7fd4e0;
-      --slate-dark:#3d7d90;
-      --slate-bg:#10262b;
-      --panda:#ef6fa3;
-      --panda-dark:#a8386b;
-      --panda-bg:#2e1522;
+      --paper:#faf6ee;
+      --paper-shadow:#e9e2d3;
+      --ink:#4a4438;
+      --ink-soft:#8a8272;
+      --sage:#9CAF88;
+      --sage-dark:#748862;
+      --sage-bg:#eef2e6;
+      --rose:#d9a5a0;
+      --rose-dark:#b97a73;
+      --rose-bg:#faeae8;
+      --mustard:#d9b26a;
+      --mustard-bg:#faf1de;
+      --slate:#a7b4c4;
+      --slate-bg:#eef1f5;
+      --panda:#d98bb0;
+      --panda-dark:#b8578c;
+      --panda-bg:#faeaf3;
       --line-dash: repeating-linear-gradient(to right, var(--ink-soft) 0, var(--ink-soft) 6px, transparent 6px, transparent 12px);
     }
     body{
-      background: #0a0d12;
-      background-image: radial-gradient(#161c24 0.6px, transparent 0.6px);
+      background: #ece6d8;
+      background-image: radial-gradient(#d9d0bb 0.6px, transparent 0.6px);
       background-size: 14px 14px;
       font-family: 'Space Mono', 'Courier Prime', monospace;
       color: var(--ink);
-      color-scheme: dark;
     }
     .receipt-font{ font-family:'Courier Prime', monospace; }
     .receipt-card{
       background: var(--paper);
-      box-shadow: 0 0 40px -6px rgba(45,212,191,0.18), 0 16px 40px -10px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px -8px rgba(74,68,56,0.25), 0 2px 6px rgba(74,68,56,0.08);
       position: relative;
     }
     .zig-top, .zig-bottom{
-      position:absolute; left:0; right:0; height:11px; background:#0a0d12;
+      position:absolute; left:0; right:0; height:11px; background:#ece6d8;
     }
     .zig-top{ top:-1px;
       -webkit-mask: repeating-linear-gradient(-45deg, transparent 0 5.5px, #000 5.5px 11px);
@@ -51,20 +46,20 @@
       display:flex; align-items:baseline; justify-content:space-between; gap:.5rem;
     }
     .dotted-row .fill{
-      flex:1; border-bottom: 2px dotted var(--line); margin:0 6px; transform:translateY(-3px);
+      flex:1; border-bottom: 2px dotted #cfc6b2; margin:0 6px; transform:translateY(-3px);
     }
-    .dashed-div{ border-top: 1.5px dashed var(--line); }
-    .badge-deposit{ background:var(--sage-bg); color:var(--sage); }
-    .badge-withdraw{ background:var(--rose-bg); color:var(--rose); }
+    .dashed-div{ border-top: 1.5px dashed #d8cfba; }
+    .badge-deposit{ background:var(--sage-bg); color:var(--sage-dark); }
+    .badge-withdraw{ background:var(--rose-bg); color:var(--rose-dark); }
     .scroll-thin::-webkit-scrollbar{ width:6px; }
-    .scroll-thin::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+    .scroll-thin::-webkit-scrollbar-thumb{ background:#d8cfba; border-radius:4px; }
     .scroll-thin::-webkit-scrollbar-track{ background:transparent; }
     .barcode{
       height:34px;
       background-image: repeating-linear-gradient(to right, var(--ink) 0px, var(--ink) 2px, transparent 2px, transparent 5px, var(--ink) 5px, var(--ink) 6px, transparent 6px, transparent 10px);
       opacity:.55;
     }
-    .modal-backdrop{ background: rgba(3,5,7,0.65); backdrop-filter: blur(3px); }
+    .modal-backdrop{ background: rgba(74,68,56,0.35); backdrop-filter: blur(3px); }
     .fab-btn{ transition: transform .15s ease; }
     .fab-btn:active{ transform: scale(0.96); }
 
@@ -90,10 +85,10 @@
     .header-btn:active{ transform: scale(0.92); opacity:.7; }
     .header-btn:disabled{ opacity:.5; cursor:default; }
     .header-btn-deposit{
-      color: var(--sage);
+      color: var(--sage-dark);
     }
     .header-btn-withdraw{
-      color: var(--rose);
+      color: var(--rose-dark);
     }
     .header-btn-export{
       color: var(--ink-soft);
@@ -114,7 +109,7 @@
     @media (hover: hover) and (pointer: fine){
       .header-btn i{ transition: transform .2s ease; }
       .header-btn:hover{ transform: translateY(-2px); }
-      .header-btn-deposit:hover{ color: var(--sage); }
+      .header-btn-deposit:hover{ color: var(--sage-dark); }
       .header-btn-deposit:hover i{ transform: scale(1.2); }
       .header-btn-withdraw:hover i{ transform: scale(1.2); }
       .header-btn-export:hover i{ transform: scale(1.2); }
@@ -132,11 +127,10 @@
     }
 
     select.plain, input.plain{
-      background: transparent; border:none; border-bottom:1.5px dashed var(--line);
+      background: transparent; border:none; border-bottom:1.5px dashed #cfc6b2;
       font-family:'Space Mono', monospace; font-size:12px; color:var(--ink);
-      color-scheme: dark;
     }
-    select.plain:focus, input.plain:focus{ outline:none; border-bottom-color: var(--sage); }
+    select.plain:focus, input.plain:focus{ outline:none; border-bottom-color: var(--sage-dark); }
 
     /* BARU: gaya dropdown Period — warna mustard, tanpa border (sepadan style Deposit/Withdraw/Export) */
     .period-select{
@@ -144,7 +138,7 @@
       font-size:11px;
       font-weight:700;
       letter-spacing:.03em;
-      color:var(--mustard);
+      color:#a97e2f;
       background: transparent;
       border: none;
       padding:3px 4px;
