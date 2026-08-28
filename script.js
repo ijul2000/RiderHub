@@ -378,6 +378,7 @@ let pendingPayload = null;
           date: document.getElementById('addDate').value,
           amount: document.getElementById('addAmount').value,
           tips: document.getElementById('addTips').value || 0,
+          tipType: document.querySelector('input[name="addTipType"]:checked').value,
           platform: document.getElementById('selectedPlatform').value
         };
         iconContainer.style.background = 'var(--sage-bg)'; iconContainer.style.color = 'var(--sage-dark)';
