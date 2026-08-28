@@ -103,6 +103,39 @@ let pendingPayload = null;
       });
     }
 
+    // BARU: Allocation Remaining (Saving 30% / Loan 70%) SENTIASA dikira dari SEMUA data
+    // (semua bulan, semua tahun, semua platform) — TIDAK terjejas oleh filter Month/Year/Platform
+    // pada dashboard. Fungsi ini sengaja tidak baca selectedMonth/selectedYear/selectedPlatform.
+    function calculateAllocationRemainingAllTime_() {
+      let rawNetEarningSum = 0, tipsSum = 0, fuelSum = 0, lainSum = 0;
+      let savingExpenseSum = 0, loanExpenseSum = 0;
+
+      masterCachedHistoryLogs.forEach(log => {
+        rawNetEarningSum += log.netEarningRaw;
+        tipsSum += log.tipsRaw;
+        fuelSum += log.fuelRaw;
+        lainSum += log.lainRaw || 0;
+        savingExpenseSum += log.savingRaw;
+        loanExpenseSum += log.loanRaw;
+      });
+
+      // Net Earning termasuk Tip Received/Incentive sekali (sama macam paparan ALL platform)
+      rawNetEarningSum += tipsSum;
+
+      let netEarningAfterFuelLain = rawNetEarningSum - fuelSum - lainSum;
+      let remainingSaving = (netEarningAfterFuelLain * 0.30) - savingExpenseSum;
+
+      // Kira integer SEN supaya Saving + Loan sentiasa jumlah tepat sama dengan (Net Earning - Expense)
+      let netEarningResultCents_ = toCents_(netEarningAfterFuelLain - savingExpenseSum - loanExpenseSum);
+      let savingCents_ = toCents_(remainingSaving);
+      let loanCents_ = netEarningResultCents_ - savingCents_;
+
+      return {
+        saving: savingCents_ / 100,
+        loan: loanCents_ / 100
+      };
+    }
+
     function syncDashboardCalculations() {
       const selectedMonth = document.getElementById('mainFilterMonth').value;
       const selectedYear = document.getElementById('mainFilterYear').value;
@@ -152,23 +185,13 @@ let pendingPayload = null;
         // BARU: Net Earning kini termasuk Tip Received sekali
         rawNetEarningSum += tipsSum;
 
-        // Allocation: peratusan dari Net Earning selepas tolak Fuel & Lain-Lain, kemudian tolak withdrawal kategori sendiri
-        let netEarningAfterFuelLain = rawNetEarningSum - fuelSum - lainSum;
-        remainingSaving = (netEarningAfterFuelLain * 0.30) - savingExpenseSum;
-        remainingLoan = (netEarningAfterFuelLain * 0.70) - loanExpenseSum;
-
         totalExpenseSum = fuelSum + savingExpenseSum + loanExpenseSum + lainSum;
         netEarningResult = rawNetEarningSum - totalExpenseSum;
 
-        // Semua pengiraan akhir dibuat dalam integer SEN — bukan desimal — supaya Saving + Loan
-        // SENTIASA jumlah tepat sama dengan Net Earning (tiada beza 1 sen, tiada isu floating-point)
+        // NOTA: Saving/Loan TIDAK lagi dikira di sini ikut period yang difilter — kini
+        // sentiasa diambil dari calculateAllocationRemainingAllTime_() (semua bulan/tahun/platform).
         let netEarningCents_ = toCents_(netEarningResult);
-        let savingCents_ = toCents_(remainingSaving);
-        let loanCents_ = netEarningCents_ - savingCents_; // baki integer tepat, bukan 70% berasingan
-
         netEarningResult = netEarningCents_ / 100;
-        remainingSaving = savingCents_ / 100;
-        remainingLoan = loanCents_ / 100;
 
       } else {
         // ---- PAPARAN IKUT PLATFORM (GrabFood / ShopeeFood / FoodPanda) ----
@@ -195,13 +218,19 @@ let pendingPayload = null;
 
       lastFilteredLogs = filteredLogs; // BARU: simpan untuk dipakai oleh modal "Lihat Semua"
 
+      // BARU: Allocation Remaining (Saving/Loan) sentiasa dikira dari SEMUA data (all month/year/platform)
+      // — tidak terjejas oleh filter di atas, walaupun Month/Year/Platform ditukar.
+      const allocationAllTime = calculateAllocationRemainingAllTime_();
+      remainingSaving = allocationAllTime.saving;
+      remainingLoan = allocationAllTime.loan;
+
       document.getElementById('lblWorkingDays').innerText = Object.keys(uniqueWorkingDates).length + " Days";
 
       document.getElementById('lblNetEarning').innerText = "RM " + fmt2_(netEarningResult);
       document.getElementById('lblTips').innerText = "RM " + fmt2_(tipsSum);
       document.getElementById('lblExpenses').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(totalExpenseSum));
-      document.getElementById('lblSaving').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(remainingSaving));
-      document.getElementById('lblLoan').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(remainingLoan));
+      document.getElementById('lblSaving').innerText = "RM " + fmt2_(remainingSaving);
+      document.getElementById('lblLoan').innerText = "RM " + fmt2_(remainingLoan);
 
       // BARU: preview terhad di resit utama
       document.getElementById('historyList').innerHTML = buildHistoryHtml(filteredLogs.slice(0, PREVIEW_LIMIT));
