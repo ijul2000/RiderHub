@@ -3,6 +3,7 @@ let pendingPayload = null;
     let chartPlatformBar;
     let masterCachedHistoryLogs = [];
     let lastFilteredLogs = []; // BARU: simpan senarai terkini yang dah difilter, dipakai oleh modal "Lihat Semua"
+    let monthlyAllocationRemaining = []; // BARU: breakdown Saving/Loan per bulan+tahun (FIFO) — HIDDEN, tak dipaparkan di UI buat masa ini
 
     // BARU: kira & papar duit dalam UNIT SEN (integer) sepenuhnya — elak terus isu floating-point
     // JS (cth 165.56000000000001) yang buat .toFixed() nampak macam "bundar". POTONG (truncate)
@@ -82,6 +83,7 @@ let pendingPayload = null;
         console.log("RIDERHUB_DEBUG history count:", (res.history || []).length);
         masterCachedHistoryLogs = res.history || [];
         buildYearFilterDropdowns();
+        computeMonthlyAllocationRemaining_(); // BARU: bina breakdown Saving/Loan per bulan (FIFO) — hidden
         syncDashboardCalculations();
       }).catch(function(err) {
         showToast("Failed to load data: " + err, "error");
@@ -101,6 +103,86 @@ let pendingPayload = null;
         icon.classList.remove('is-spinning');
         btn.disabled = false;
       });
+    }
+
+    // BARU: Allocation Remaining PER BULAN+TAHUN (Saving 30% / Loan 70%) — HIDDEN, tak dipaparkan
+    // di UI buat masa ini. Disimpan dalam `monthlyAllocationRemaining` untuk kegunaan akan datang.
+    //
+    // Cara ia berfungsi:
+    // 1. Setiap bulan+tahun ada "baldi" (bucket) Saving & Loan sendiri, dikira 30%/70% daripada
+    //    Net Earning bulan tersebut (selepas tolak Fuel & Lain-Lain, termasuk Tip/Incentive).
+    // 2. Jumlah SEMUA withdrawal Saving (dan berasingan, Loan) — tak kira bulan withdrawal tu
+    //    dibuat — dikumpul jadi satu "pool", kemudian ditolak secara FIFO (First-In-First-Out)
+    //    bermula dari bucket bulan PALING LAMA dahulu. Contoh: bucket bulan 7 dihabiskan dulu;
+    //    jika tak cukup, baki ditolak dari bucket bulan 8, kemudian bulan 9, dan seterusnya
+    //    ikut turutan kronologi — tak kira bila (bulan mana) pengeluaran sebenar itu dibuat.
+    // 3. Jika jumlah withdrawal melebihi jumlah SEMUA bucket (over-withdrawn), baki defisit
+    //    diletakkan pada bucket bulan PALING BARU supaya jumlah keseluruhan kekal konsisten
+    //    dengan Total Allocation Remaining (calculateAllocationRemainingAllTime_).
+    function computeMonthlyAllocationRemaining_() {
+      // Step 1: kumpul & jumlahkan data ikut key "tahun-bulan"
+      let monthMap = {};
+      masterCachedHistoryLogs.forEach(log => {
+        let key = log.year * 100 + log.month;
+        if (!monthMap[key]) {
+          monthMap[key] = { year: log.year, month: log.month, netRaw: 0, tipsRaw: 0, fuelRaw: 0, lainRaw: 0 };
+        }
+        monthMap[key].netRaw += log.netEarningRaw;
+        monthMap[key].tipsRaw += log.tipsRaw;
+        monthMap[key].fuelRaw += log.fuelRaw;
+        monthMap[key].lainRaw += log.lainRaw || 0;
+      });
+
+      // Step 2: susun kronologi menaik (paling lama dahulu) — turutan ini yang jadi asas FIFO
+      let months = Object.keys(monthMap).map(k => monthMap[k]).sort(function(a, b) {
+        return (a.year * 10000 + a.month) - (b.year * 10000 + b.month);
+      });
+
+      // Step 3: kira jumlah "generated" Saving (30%) & Loan (70%) setiap bucket bulan, dalam SEN
+      months.forEach(m => {
+        let netAfterFuelLain = (m.netRaw + m.tipsRaw) - m.fuelRaw - m.lainRaw;
+        m.savingGeneratedCents = toCents_(netAfterFuelLain * 0.30);
+        m.loanGeneratedCents = toCents_(netAfterFuelLain) - m.savingGeneratedCents; // baki tepat, elak isu float
+      });
+
+      // Step 4: jumlah keseluruhan withdrawal Saving & Loan (SEMUA masa, tak kira bulan withdrawal dibuat)
+      let savingPoolCents = 0, loanPoolCents = 0;
+      masterCachedHistoryLogs.forEach(log => {
+        savingPoolCents += toCents_(log.savingRaw);
+        loanPoolCents += toCents_(log.loanRaw);
+      });
+
+      // Step 5: telan pool FIFO dari bucket paling lama ke paling baru
+      months.forEach(m => {
+        let usedSaving = Math.min(m.savingGeneratedCents, savingPoolCents);
+        m.savingRemainingCents = m.savingGeneratedCents - usedSaving;
+        savingPoolCents -= usedSaving;
+
+        let usedLoan = Math.min(m.loanGeneratedCents, loanPoolCents);
+        m.loanRemainingCents = m.loanGeneratedCents - usedLoan;
+        loanPoolCents -= usedLoan;
+      });
+
+      // Step 6: jika pool masih berbaki selepas semua bucket ditelan (over-withdrawn),
+      // letak defisit pada bucket bulan PALING BARU (supaya jumlah keseluruhan tetap padan)
+      if (months.length > 0 && (savingPoolCents > 0 || loanPoolCents > 0)) {
+        let latest = months[months.length - 1];
+        latest.savingRemainingCents -= savingPoolCents;
+        latest.loanRemainingCents -= loanPoolCents;
+      }
+
+      // Step 7: hasil akhir — nilai dalam ringgit (bukan sen), sedia untuk dipaparkan kelak
+      monthlyAllocationRemaining = months.map(m => ({
+        year: m.year,
+        month: m.month,
+        savingGenerated: m.savingGeneratedCents / 100,
+        loanGenerated: m.loanGeneratedCents / 100,
+        savingRemaining: m.savingRemainingCents / 100,
+        loanRemaining: m.loanRemainingCents / 100
+      }));
+
+      // BARU: debug sementara — buka console untuk lihat breakdown per bulan (data ini hidden dari UI)
+      console.log("RIDERHUB_DEBUG monthlyAllocationRemaining:", monthlyAllocationRemaining);
     }
 
     // BARU: Allocation Remaining (Saving 30% / Loan 70%) SENTIASA dikira dari SEMUA data
