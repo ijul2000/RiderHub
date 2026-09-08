@@ -269,7 +269,7 @@ let pendingPayload = null;
 
       let uniqueWorkingDates = {};
       let filteredLogs;
-      let tipsSum = 0, fuelSum = 0, lainSum = 0;
+      let tipsSum = 0, tipReceivedSum = 0, incentiveSum = 0, fuelSum = 0, lainSum = 0;
       let grabEarningSum = 0, shopeeEarningSum = 0, foodpandaEarningSum = 0;
       let netEarningResult = 0, totalExpenseSum = 0;
       let remainingSaving = 0, remainingLoan = 0;
@@ -287,6 +287,8 @@ let pendingPayload = null;
         filteredLogs.forEach(log => {
           rawNetEarningSum += log.netEarningRaw;
           tipsSum += log.tipsRaw;
+          tipReceivedSum += log.tipReceivedRaw || 0;
+          incentiveSum += log.incentiveRaw || 0;
           fuelSum += log.fuelRaw;
           // NOTA: savingRaw/loanRaw TIDAK lagi dijumlahkan di sini (ikut tarikh withdrawal).
           // Digantikan dengan nilai FIFO (sumMonthlyAllocationUsage_) di bawah, supaya Saving/Loan
@@ -326,6 +328,8 @@ let pendingPayload = null;
           if (log.type === "Deposit" && log.category === selectedPlatform) {
             netEarningResult += log.netEarningRaw;
             tipsSum += log.tipsRaw;
+            tipReceivedSum += log.tipReceivedRaw || 0;
+            incentiveSum += log.incentiveRaw || 0;
             uniqueWorkingDates[log.date] = true;
             if (log.category === "GrabFood") { grabEarningSum += log.netEarningRaw; }
             else if (log.category === "ShopeeFood") { shopeeEarningSum += log.netEarningRaw; }
@@ -352,7 +356,8 @@ let pendingPayload = null;
       document.getElementById('lblWorkingDays').innerText = Object.keys(uniqueWorkingDates).length + " Days";
 
       document.getElementById('lblNetEarning').innerText = "RM " + fmt2_(netEarningResult);
-      document.getElementById('lblTips').innerText = "RM " + fmt2_(tipsSum);
+      document.getElementById('lblTipReceived').innerText = "RM " + fmt2_(tipReceivedSum);
+      document.getElementById('lblIncentive').innerText = "RM " + fmt2_(incentiveSum);
       document.getElementById('lblExpenses').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(totalExpenseSum));
       document.getElementById('lblSaving').innerText = "RM " + fmt2_(remainingSaving);
       document.getElementById('lblLoan').innerText = "RM " + fmt2_(remainingLoan);
@@ -656,7 +661,8 @@ let pendingPayload = null;
         doc.setFontSize(9);
         const earningsRows = [
           ['Net Earning', document.getElementById('lblNetEarning').innerText],
-          ['Tip Received/Incentive', document.getElementById('lblTips').innerText],
+          ['Tip Received', document.getElementById('lblTipReceived').innerText],
+          ['Incentive', document.getElementById('lblIncentive').innerText],
           ['Expense', document.getElementById('lblExpenses').innerText]
         ];
         earningsRows.forEach(row => {
