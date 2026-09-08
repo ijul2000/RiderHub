@@ -239,6 +239,20 @@ let pendingPayload = null;
       };
     }
 
+    // BARU: Allocation Remaining KHUSUS BULAN — jumlahkan savingRemaining/loanRemaining (dari FIFO
+    // monthlyAllocationRemaining) untuk bulan/tahun yang sepadan dengan filter PERIOD semasa.
+    // Ini berasingan & TIDAK sama dengan calculateAllocationRemainingAllTime_() (pool keseluruhan).
+    function calculateAllocationRemainingForPeriod_(selectedMonth, selectedYear) {
+      let savingSum = 0, loanSum = 0;
+      monthlyAllocationRemaining.forEach(m => {
+        if (selectedMonth !== "ALL" && String(m.month) !== selectedMonth) return;
+        if (selectedYear !== "ALL" && String(m.year) !== selectedYear) return;
+        savingSum += m.savingRemaining;
+        loanSum += m.loanRemaining;
+      });
+      return { saving: savingSum, loan: loanSum };
+    }
+
     function syncDashboardCalculations() {
       const selectedMonth = document.getElementById('mainFilterMonth').value;
       const selectedYear = document.getElementById('mainFilterYear').value;
@@ -342,6 +356,18 @@ let pendingPayload = null;
       document.getElementById('lblExpenses').innerText = showBlankExpenseAllocation ? "-" : ("RM " + fmt2_(totalExpenseSum));
       document.getElementById('lblSaving').innerText = "RM " + fmt2_(remainingSaving);
       document.getElementById('lblLoan').innerText = "RM " + fmt2_(remainingLoan);
+
+      // BARU: paparkan Allocation Remaining khusus bulan/tahun yang ditapis (PERIOD di atas)
+      const allocationForPeriod = calculateAllocationRemainingForPeriod_(selectedMonth, selectedYear);
+      document.getElementById('lblSavingMonth').innerText = "RM " + fmt2_(allocationForPeriod.saving);
+      document.getElementById('lblLoanMonth').innerText = "RM " + fmt2_(allocationForPeriod.loan);
+
+      let periodLabel;
+      if (selectedMonth === "ALL" && selectedYear === "ALL") periodLabel = "ALL MONTHS";
+      else if (selectedMonth === "ALL") periodLabel = selectedYear;
+      else if (selectedYear === "ALL") periodLabel = monthNames[Number(selectedMonth)].toUpperCase();
+      else periodLabel = monthNames[Number(selectedMonth)].toUpperCase() + " " + selectedYear;
+      document.getElementById('lblAllocMonthPeriod').innerText = periodLabel;
 
       // BARU: preview terhad di resit utama
       document.getElementById('historyList').innerHTML = buildHistoryHtml(filteredLogs.slice(0, PREVIEW_LIMIT));
@@ -653,6 +679,25 @@ let pendingPayload = null;
           ['Loan (70%)', document.getElementById('lblLoan').innerText]
         ];
         allocationRows.forEach(row => {
+          doc.text(row[0], marginX, y);
+          doc.text(row[1], pageWidth - marginX, y, { align: 'right' });
+          y += 15;
+        });
+        y += 8;
+
+        // BARU: ALLOCATION REMAINING (BULAN) SECTION — sepadan dengan PERIOD filter semasa
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(10);
+        doc.text('ALLOCATION REMAINING (' + document.getElementById('lblAllocMonthPeriod').innerText + ')', marginX, y);
+        y += 16;
+
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(9);
+        const allocationMonthRows = [
+          ['Saving (30%)', document.getElementById('lblSavingMonth').innerText],
+          ['Loan (70%)', document.getElementById('lblLoanMonth').innerText]
+        ];
+        allocationMonthRows.forEach(row => {
           doc.text(row[0], marginX, y);
           doc.text(row[1], pageWidth - marginX, y, { align: 'right' });
           y += 15;
