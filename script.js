@@ -666,25 +666,6 @@ let pendingPayload = null;
         });
         y += 8;
 
-        // ALLOCATION REMAINING SECTION
-        doc.setFont('courier', 'bold');
-        doc.setFontSize(10);
-        doc.text('ALLOCATION REMAINING', marginX, y);
-        y += 16;
-
-        doc.setFont('courier', 'normal');
-        doc.setFontSize(9);
-        const allocationRows = [
-          ['Saving (30%)', document.getElementById('lblSaving').innerText],
-          ['Loan (70%)', document.getElementById('lblLoan').innerText]
-        ];
-        allocationRows.forEach(row => {
-          doc.text(row[0], marginX, y);
-          doc.text(row[1], pageWidth - marginX, y, { align: 'right' });
-          y += 15;
-        });
-        y += 8;
-
         // BARU: ALLOCATION REMAINING (BULAN) SECTION — sepadan dengan PERIOD filter semasa
         doc.setFont('courier', 'bold');
         doc.setFontSize(10);
@@ -698,6 +679,25 @@ let pendingPayload = null;
           ['Loan (70%)', document.getElementById('lblLoanMonth').innerText]
         ];
         allocationMonthRows.forEach(row => {
+          doc.text(row[0], marginX, y);
+          doc.text(row[1], pageWidth - marginX, y, { align: 'right' });
+          y += 15;
+        });
+        y += 8;
+
+        // ALLOCATION REMAINING (POOL) SECTION
+        doc.setFont('courier', 'bold');
+        doc.setFontSize(10);
+        doc.text('ALLOCATION REMAINING (POOL)', marginX, y);
+        y += 16;
+
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(9);
+        const allocationRows = [
+          ['Saving (30%)', document.getElementById('lblSaving').innerText],
+          ['Loan (70%)', document.getElementById('lblLoan').innerText]
+        ];
+        allocationRows.forEach(row => {
           doc.text(row[0], marginX, y);
           doc.text(row[1], pageWidth - marginX, y, { align: 'right' });
           y += 15;
