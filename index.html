@@ -160,15 +160,14 @@
           <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">AMOUNT (RM)</label>
           <input type="number" step="0.01" id="addAmount" placeholder="0.00" required class="plain w-full py-1.5 text-sm">
         </div>
-        <div>
-          <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">TIP RECEIVED/INCENTIVE (RM)</label>
-          <input type="number" step="0.01" id="addTips" placeholder="0.00 (optional)" class="plain w-full py-1.5 text-sm">
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold tracking-wide mb-2" style="color:var(--ink-soft)">TYPE</label>
-          <div class="grid grid-cols-2 gap-2 text-[11px] font-bold">
-            <label class="rounded-lg p-2 flex items-center gap-1.5 cursor-pointer" style="background:#f4f0e6"><input type="radio" name="addTipType" value="Tip Received" checked><span>Tip Received</span></label>
-            <label class="rounded-lg p-2 flex items-center gap-1.5 cursor-pointer" style="background:#f4f0e6"><input type="radio" name="addTipType" value="Incentive"><span>Incentive</span></label>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">TIP RECEIVED (RM)</label>
+            <input type="number" step="0.01" id="addTipReceived" placeholder="0.00 (optional)" class="plain w-full py-1.5 text-sm">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold tracking-wide mb-1" style="color:var(--ink-soft)">INCENTIVE (RM)</label>
+            <input type="number" step="0.01" id="addIncentive" placeholder="0.00 (optional)" class="plain w-full py-1.5 text-sm">
           </div>
         </div>
         <div>
