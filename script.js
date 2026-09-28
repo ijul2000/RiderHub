@@ -349,7 +349,10 @@ let pendingPayload = null;
 
       // BARU: Allocation Remaining (Saving/Loan) sentiasa dikira dari SEMUA data (all month/year/platform)
       // — tidak terjejas oleh filter di atas, walaupun Month/Year/Platform ditukar.
-      const allocationAllTime = calculateAllocationRemainingAllTime_();
+      // KINI guna kaedah yang SAMA dengan Allocation Remaining (bulan): jumlah savingRemaining/loanRemaining
+      // FIFO per-bulan untuk SEMUA bulan/tahun. Nilai pool = jumlah tepat semua bucket bulan (dalam sen),
+      // jadi sama persis dengan Allocation Remaining (bulan) bila period = ALL MONTHS.
+      const allocationAllTime = calculateAllocationRemainingForPeriod_("ALL", "ALL");
       remainingSaving = allocationAllTime.saving;
       remainingLoan = allocationAllTime.loan;
 
